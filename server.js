@@ -10,19 +10,10 @@ const app = express();
 const SECRET = process.env.SESSION_SECRET || 'planeja-ativo-secret';
 const PORT = process.env.PORT || 3000;
 
-// Middleware de log para depuração no Render
-app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-});
-
 app.use(bodyParser.json());
 
-// Forçar caminhos absolutos para evitar erros no Render
+// Servir arquivos estáticos usando caminho absoluto real
 const publicPath = path.resolve(__dirname, 'public');
-const dataPath = path.resolve(__dirname, 'data');
-
-// Servir arquivos estáticos de forma explícita
 app.use(express.static(publicPath));
 
 // Inicialização do Banco de Dados
@@ -36,7 +27,6 @@ db.exec(`
     password TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
-
   CREATE TABLE IF NOT EXISTS results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -48,12 +38,10 @@ db.exec(`
   );
 `);
 
-// Middleware de Autenticação
 const authenticate = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.sendStatus(401);
-
     jwt.verify(token, SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
@@ -61,7 +49,6 @@ const authenticate = (req, res, next) => {
     });
 };
 
-// Rotas da API
 app.post('/api/register', (req, res) => {
     const { username, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
@@ -69,11 +56,7 @@ app.post('/api/register', (req, res) => {
         const result = db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run(username, hashedPassword);
         res.json({ success: true, id: result.lastInsertRowid });
     } catch (err) {
-        if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-            res.status(400).json({ error: "Usuário já existe" });
-        } else {
-            res.status(500).json({ error: "Erro ao criar usuário" });
-        }
+        res.status(400).json({ error: "Usuário já existe ou erro no cadastro" });
     }
 });
 
@@ -89,10 +72,10 @@ app.post('/api/login', (req, res) => {
 
 app.get('/api/questions', authenticate, (req, res) => {
     try {
-        const fileContent = fs.readFileSync(path.join(dataPath, 'questoes.json'), 'utf8');
-        res.json(JSON.parse(fileContent));
+        const p = path.resolve(__dirname, 'data', 'questoes.json');
+        const data = fs.readFileSync(p, 'utf8');
+        res.json(JSON.parse(data));
     } catch (err) {
-        console.error("Erro ao ler questões:", err);
         res.status(500).json({ error: "Erro ao carregar questões" });
     }
 });
@@ -117,26 +100,16 @@ app.get('/api/history', authenticate, (req, res) => {
 app.get('/api/ranking', authenticate, (req, res) => {
     const ranking = db.prepare(`
         SELECT u.username, MAX(r.score) as score, r.total, r.date 
-        FROM results r 
-        JOIN users u ON r.user_id = u.id 
-        GROUP BY u.id
-        ORDER BY score DESC 
-        LIMIT 10
+        FROM results r JOIN users u ON r.user_id = u.id 
+        GROUP BY u.id ORDER BY score DESC LIMIT 10
     `).all();
     res.json(ranking);
 });
 
-// Fallback explícito para o index.html
+// Rota raiz e Fallback para SPA (MUITO IMPORTANTE)
 app.get('*', (req, res) => {
-    const indexPath = path.join(publicPath, 'index.html');
-    if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-    } else {
-        res.status(404).send('Arquivo index.html não encontrado no servidor.');
-    }
+    if (req.url.includes('.')) return res.status(404).send('Not Found');
+    res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Caminho public: ${publicPath}`);
-});
+app.listen(PORT, '0.0.0.0', () => console.log(`Rodando na porta ${PORT}`));
