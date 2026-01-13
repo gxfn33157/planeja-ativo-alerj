@@ -10,7 +10,7 @@ const app = express();
 const SECRET = process.env.SESSION_SECRET || 'planeja-ativo-secret';
 const PORT = process.env.PORT || 3000;
 
-// Logging for debugging on Render
+// Logging para depuração no Render
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
@@ -18,13 +18,12 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-// Serve static files from the 'public' folder
-// Using absolute path to ensure Render finds it
-const publicPath = path.join(__dirname, 'public');
-app.use(express.static(publicPath));
+// Servir arquivos estáticos da pasta 'public'
+// IMPORTANTE: __dirname garante que o caminho seja absoluto no Render
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Database Initialization
-const dbPath = process.env.DATABASE_URL || './planeja.db';
+// Inicialização do Banco de Dados
+const dbPath = process.env.DATABASE_URL || path.join(__dirname, 'planeja.db');
 const db = new Database(dbPath);
 
 db.exec(`
@@ -46,7 +45,7 @@ db.exec(`
   );
 `);
 
-// Auth Middleware
+// Middleware de Autenticação
 const authenticate = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -59,7 +58,7 @@ const authenticate = (req, res, next) => {
     });
 };
 
-// API Routes
+// Rotas da API
 app.post('/api/register', (req, res) => {
     const { username, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
@@ -123,9 +122,14 @@ app.get('/api/ranking', authenticate, (req, res) => {
     res.json(ranking);
 });
 
-// Catch-all route to serve index.html for any non-API request
+// Rota para o index.html (específica para a raiz)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Fallback para qualquer outra rota não encontrada (SPA behavior)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(publicPath, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
