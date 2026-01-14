@@ -1,210 +1,159 @@
-/*************************************************
- * AUTENTICAÇÃO
- *************************************************/
-const token = localStorage.getItem("token");
-const username = localStorage.getItem("username");
+// =================== VARIÁVEIS GLOBAIS ===================
+let questoes = [];
+let respostas = {};
+let indiceAtual = 0;
+let token = localStorage.getItem("token");
+
+// =================== ELEMENTOS ===================
+const screens = document.querySelectorAll(".screen");
 
 const loginScreen = document.getElementById("login-screen");
 const dashboardScreen = document.getElementById("dashboard-screen");
 const simuladoScreen = document.getElementById("simulado-screen");
 const resultScreen = document.getElementById("result-screen");
 
+const perguntaEl = document.getElementById("q-text");
+const opcoesEl = document.getElementById("q-options");
+const progressoEl = document.getElementById("q-number");
+
+const btnNext = document.getElementById("btn-next");
+const btnFinish = document.getElementById("btn-finish");
+
+const userDisplay = document.getElementById("user-display");
+
+// =================== CONTROLE DE TELAS ===================
 function showScreen(screen) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  screens.forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
 }
 
-// Se NÃO estiver logado → fica no login
-if (!token) {
-  showScreen(loginScreen);
-} else {
-  document.getElementById("user-display").innerText = username;
-  showScreen(dashboardScreen);
-  carregarDashboard();
-}
-
-/*************************************************
- * LOGIN / LOGOUT
- *************************************************/
+// =================== LOGIN / LOGOUT ===================
 async function login() {
-  const usernameInput = document.getElementById("username").value.trim();
-  const passwordInput = document.getElementById("password").value;
-
-  if (!usernameInput || !passwordInput) {
-    document.getElementById("login-msg").innerText = "Preencha usuário e senha.";
-    return;
-  }
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("login-msg");
 
   try {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: usernameInput,
-        password: passwordInput
-      })
+      body: JSON.stringify({ username, password })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      document.getElementById("login-msg").innerText = data.error || "Erro no login.";
+      msg.innerText = data.error || "Erro no login";
       return;
     }
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.username);
-    location.reload();
+    token = data.token;
 
+    userDisplay.innerText = data.username;
+    showScreen(dashboardScreen);
   } catch (err) {
-    console.error(err);
-    document.getElementById("login-msg").innerText = "Erro ao conectar ao servidor.";
-  }
-}
-
-async function register() {
-  const usernameInput = document.getElementById("username").value.trim();
-  const passwordInput = document.getElementById("password").value;
-
-  if (!usernameInput || !passwordInput) {
-    document.getElementById("login-msg").innerText = "Preencha usuário e senha.";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: usernameInput,
-        password: passwordInput
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      document.getElementById("login-msg").innerText = data.error || "Erro no cadastro.";
-      return;
-    }
-
-    document.getElementById("login-msg").innerText = "Conta criada! Faça login.";
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("login-msg").innerText = "Erro ao conectar ao servidor.";
+    msg.innerText = "Erro de conexão com o servidor";
   }
 }
 
 function logout() {
-  localStorage.clear();
-  location.reload();
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  token = null;
+  showScreen(loginScreen);
 }
 
-/*************************************************
- * SIMULADO
- *************************************************/
-let questoes = [];
-let indiceAtual = 0;
-let respostas = {};
-
-function startSimulado() {
-  showScreen(simuladoScreen);
-  carregarQuestoes();
-}
-
-function quitSimulado() {
-  showScreen(dashboardScreen);
-}
-
-async function carregarQuestoes() {
+// =================== INICIAR SIMULADO ===================
+async function startSimulado() {
   try {
-    const res = await fetch("/api/questions", {
+    const res = await fetch("/api/simulado", {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
 
-    if (!res.ok) {
-      alert("Sessão expirada. Faça login novamente.");
-      logout();
-      return;
-    }
+    const data = await res.json();
 
-    questoes = await res.json();
+    questoes = data.questions;
+    respostas = data.answers || {};
+    indiceAtual = data.currentIndex || 0;
 
-    // Recuperar progresso salvo
-    const salvo = JSON.parse(localStorage.getItem("simuladoProgresso"));
-    if (salvo) {
-      indiceAtual = salvo.indice;
-      respostas = salvo.respostas || {};
-    }
-
+    showScreen(simuladoScreen);
     renderizarQuestao();
-
   } catch (err) {
-    console.error(err);
-    alert("Erro ao carregar questões.");
+    alert("Erro ao carregar simulado");
   }
 }
 
+// =================== RENDERIZAR QUESTÃO ===================
 function renderizarQuestao() {
   const questao = questoes[indiceAtual];
+
   if (!questao) {
     finalizarSimulado();
     return;
   }
 
-  document.getElementById("q-number").innerText =
-    `Questão ${indiceAtual + 1}/${questoes.length}`;
-  document.getElementById("q-text").innerText = questao.texto;
-
-  const opcoesEl = document.getElementById("q-options");
+  perguntaEl.innerText = questao.texto;
   opcoesEl.innerHTML = "";
 
   const letras = ["A", "B", "C", "D", "E"];
 
-  questao.alternativas.forEach((alt, i) => {
+  questao.alts.forEach((alt, i) => {
+    const letra = letras[i];
+
     const label = document.createElement("label");
     label.className = "option";
 
     const input = document.createElement("input");
     input.type = "radio";
-    input.name = "opcao";
-    input.value = letras[i];
+    input.name = "alternativa";
+    input.value = letra;
 
-    if (respostas[indiceAtual] === letras[i]) {
+    if (respostas[indiceAtual] === letra) {
       input.checked = true;
     }
 
     input.addEventListener("change", () => {
-      respostas[indiceAtual] = letras[i];
+      respostas[indiceAtual] = letra;
       salvarProgresso();
     });
 
     label.appendChild(input);
-    label.append(` ${letras[i]}) ${alt}`);
+    label.append(` ${letra}) ${alt.l}`);
     opcoesEl.appendChild(label);
   });
 
-  document.getElementById("btn-next").style.display =
-    indiceAtual === questoes.length - 1 ? "none" : "inline-block";
-  document.getElementById("btn-finish").style.display =
-    indiceAtual === questoes.length - 1 ? "inline-block" : "none";
+  progressoEl.innerText = `Questão ${indiceAtual + 1}/${questoes.length}`;
+
+  btnNext.style.display = indiceAtual === questoes.length - 1 ? "none" : "inline-block";
+  btnFinish.style.display = indiceAtual === questoes.length - 1 ? "inline-block" : "none";
 }
 
+// =================== SALVAR PROGRESSO (API) ===================
 function salvarProgresso() {
-  localStorage.setItem("simuladoProgresso", JSON.stringify({
-    indice: indiceAtual,
-    respostas
-  }));
+  fetch("/api/progress", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      currentIndex: indiceAtual,
+      answers: respostas
+    })
+  });
 }
 
+// =================== NAVEGAÇÃO ===================
 function nextQuestion() {
   if (!respostas[indiceAtual]) {
     alert("Selecione uma alternativa antes de continuar.");
     return;
   }
+
   indiceAtual++;
   salvarProgresso();
   renderizarQuestao();
@@ -213,15 +162,20 @@ function nextQuestion() {
 function prevQuestion() {
   if (indiceAtual > 0) {
     indiceAtual--;
-    salvarProgresso();
     renderizarQuestao();
   }
 }
 
-function finalizarSimulado() {
-  localStorage.removeItem("simuladoProgresso");
+function quitSimulado() {
+  if (confirm("Deseja sair? Seu progresso ficará salvo.")) {
+    showScreen(dashboardScreen);
+  }
+}
 
+// =================== FINALIZAR SIMULADO ===================
+async function finalizarSimulado() {
   let acertos = 0;
+
   questoes.forEach((q, i) => {
     if (respostas[i] === q.correta) acertos++;
   });
@@ -229,20 +183,30 @@ function finalizarSimulado() {
   document.getElementById("score-val").innerText = acertos;
   document.getElementById("total-val").innerText = questoes.length;
 
-  const subjectList = document.getElementById("subject-list");
-  subjectList.innerHTML = "";
+  await fetch("/api/finish", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
 
   showScreen(resultScreen);
 }
 
+// =================== DASHBOARD ===================
 function showDashboard() {
   showScreen(dashboardScreen);
-  carregarDashboard();
 }
 
-/*************************************************
- * DASHBOARD
- *************************************************/
-function carregarDashboard() {
-  // Futuro: histórico, ranking, estatísticas
+// =================== AUTO LOGIN ===================
+if (token) {
+  const username = localStorage.getItem("username");
+  if (username) {
+    userDisplay.innerText = username;
+    showScreen(dashboardScreen);
+  } else {
+    showScreen(loginScreen);
+  }
+} else {
+  showScreen(loginScreen);
 }
