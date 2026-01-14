@@ -1,186 +1,163 @@
-/* =========================
-   VARIÁVEIS GLOBAIS
-========================= */
+let currentUser = null;
 let questoes = [];
-let questaoAtual = 0;
+let currentIndex = 0;
 let respostas = [];
 
-/* =========================
-   CONTROLE DE TELAS
-========================= */
+/* ======================
+   TELAS
+====================== */
+
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s =>
+    s.classList.remove("active")
+  );
   document.getElementById(id).classList.add("active");
 }
 
-/* =========================
-   LOGIN / LOGOUT
-========================= */
+/* ======================
+   LOGIN / REGISTRO
+====================== */
+
 function login() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value.trim();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
   const msg = document.getElementById("login-msg");
 
-  if (!user || !pass) {
-    msg.innerText = "Preencha usuário e senha.";
-    return;
-  }
-
-  localStorage.setItem("planejaUser", user);
-  showDashboard();
+  fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(data => {
+      currentUser = data.username;
+      document.getElementById("user-display").innerText = currentUser;
+      showScreen("dashboard-screen");
+    })
+    .catch(() => {
+      msg.innerText = "Usuário ou senha inválidos.";
+    });
 }
 
 function register() {
-  alert("Cadastro simplificado: use qualquer usuário e senha.");
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("login-msg");
+
+  fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(() => {
+      msg.innerText = "Conta criada! Agora faça login.";
+    })
+    .catch(() => {
+      msg.innerText = "Erro ao criar conta.";
+    });
 }
 
 function logout() {
-  localStorage.removeItem("planejaUser");
+  currentUser = null;
   showScreen("login-screen");
 }
 
-function showDashboard() {
-  const user = localStorage.getItem("planejaUser");
-  if (!user) {
-    showScreen("login-screen");
-    return;
-  }
-
-  document.getElementById("user-display").innerText = user;
-  showScreen("dashboard-screen");
-}
-
-/* =========================
+/* ======================
    SIMULADO
-========================= */
-async function startSimulado() {
-  try {
-    const res = await fetch("/questoes.json");
-    questoes = await res.json();
+====================== */
 
-    embaralhar(questoes);
-    questoes = questoes.slice(0, 80);
-
-    questaoAtual = 0;
-    respostas = new Array(questoes.length).fill(null);
-
-    showScreen("simulado-screen");
-    renderQuestao();
-  } catch (e) {
-    alert("Erro ao carregar questões.");
-    console.error(e);
-  }
+function startSimulado() {
+  fetch("/api/questoes")
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(data => {
+      questoes = data;
+      respostas = new Array(questoes.length).fill(null);
+      currentIndex = 0;
+      showScreen("simulado-screen");
+      renderQuestao();
+    })
+    .catch(() => {
+      alert("Erro ao carregar questões.");
+    });
 }
 
 function renderQuestao() {
-  const q = questoes[questaoAtual];
+  const q = questoes[currentIndex];
 
   document.getElementById("q-number").innerText =
-    `Questão ${questaoAtual + 1}/${questoes.length}`;
+    `Questão ${currentIndex + 1}/${questoes.length}`;
 
-  document.getElementById("q-text").innerText = q.texto;
+  document.getElementById("q-text").innerText = q.pergunta;
 
   const optionsDiv = document.getElementById("q-options");
   optionsDiv.innerHTML = "";
 
-  const letras = ["A", "B", "C", "D", "E"];
-
-  q.alts.forEach((alt, i) => {
-    const btn = document.createElement("button");
-    btn.className = "option";
-    btn.innerText = `${letras[i]}) ${alt.l}`;
-
-    if (respostas[questaoAtual] === letras[i]) {
-      btn.classList.add("selected");
-    }
-
-    btn.onclick = () => {
-      respostas[questaoAtual] = letras[i];
-      renderQuestao();
-    };
-
-    optionsDiv.appendChild(btn);
+  q.opcoes.forEach((opt, i) => {
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="radio" name="option" value="${i}"
+        ${respostas[currentIndex] === i ? "checked" : ""}>
+      ${opt}
+    `;
+    optionsDiv.appendChild(label);
   });
 
   document.getElementById("btn-next").style.display =
-    questaoAtual === questoes.length - 1 ? "none" : "inline-block";
+    currentIndex === questoes.length - 1 ? "none" : "inline-block";
 
   document.getElementById("btn-finish").style.display =
-    questaoAtual === questoes.length - 1 ? "inline-block" : "none";
+    currentIndex === questoes.length - 1 ? "inline-block" : "none";
+}
+
+function salvarResposta() {
+  const checked = document.querySelector('input[name="option"]:checked');
+  if (checked) respostas[currentIndex] = Number(checked.value);
 }
 
 function nextQuestion() {
-  if (questaoAtual < questoes.length - 1) {
-    questaoAtual++;
+  salvarResposta();
+  if (currentIndex < questoes.length - 1) {
+    currentIndex++;
     renderQuestao();
   }
 }
 
 function prevQuestion() {
-  if (questaoAtual > 0) {
-    questaoAtual--;
+  salvarResposta();
+  if (currentIndex > 0) {
+    currentIndex--;
     renderQuestao();
   }
 }
 
-function quitSimulado() {
-  if (confirm("Deseja sair do simulado?")) {
-    showDashboard();
-  }
-}
-
-/* =========================
-   FINALIZAÇÃO
-========================= */
 function finishSimulado() {
-  let acertos = 0;
-  const porMateria = {};
+  salvarResposta();
 
+  let score = 0;
   questoes.forEach((q, i) => {
-    if (!porMateria[q.materia]) {
-      porMateria[q.materia] = { total: 0, acertos: 0 };
-    }
-
-    porMateria[q.materia].total++;
-
-    if (respostas[i] === q.correta) {
-      acertos++;
-      porMateria[q.materia].acertos++;
-    }
+    if (respostas[i] === q.correta) score++;
   });
 
-  document.getElementById("score-val").innerText = acertos;
+  document.getElementById("score-val").innerText = score;
   document.getElementById("total-val").innerText = questoes.length;
-
-  const list = document.getElementById("subject-list");
-  list.innerHTML = "";
-
-  Object.keys(porMateria).forEach(mat => {
-    const li = document.createElement("li");
-    li.innerText = `${mat}: ${porMateria[mat].acertos}/${porMateria[mat].total}`;
-    list.appendChild(li);
-  });
 
   showScreen("result-screen");
 }
 
-/* =========================
-   UTIL
-========================= */
-function embaralhar(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
+function quitSimulado() {
+  showScreen("dashboard-screen");
 }
 
-/* =========================
-   AUTO LOGIN
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("planejaUser")) {
-    showDashboard();
-  } else {
-    showScreen("login-screen");
-  }
-});
+function showDashboard() {
+  showScreen("dashboard-screen");
+}
