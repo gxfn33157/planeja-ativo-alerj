@@ -1,123 +1,186 @@
+/* =========================
+   VARIÁVEIS GLOBAIS
+========================= */
 let questoes = [];
-let indiceAtual = 0;
-let respostas = {};
+let questaoAtual = 0;
+let respostas = [];
 
-// ELEMENTOS DA TELA (precisam existir no HTML)
-const perguntaEl = document.getElementById("q-text");
-const alternativasEl = document.getElementById("q-options");
-const progressoEl = document.getElementById("q-number");
-const btnProximo = document.getElementById("btn-next");
-const btnFinalizar = document.getElementById("btn-finish");
-
-// ====== CARREGAR QUESTÕES ======
-async function carregarQuestoes() {
-  try {
-    const res = await fetch("/api/questions", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token")
-      }
-    });
-
-    questoes = await res.json();
-
-    // recuperar progresso salvo
-    const salvo = JSON.parse(localStorage.getItem("simuladoProgresso"));
-    if (salvo) {
-      indiceAtual = salvo.indice;
-      respostas = salvo.respostas || {};
-    }
-
-    renderizarQuestao();
-  } catch (err) {
-    perguntaEl.innerText = "Erro ao carregar questões.";
-    console.error(err);
-  }
+/* =========================
+   CONTROLE DE TELAS
+========================= */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-// ====== RENDERIZAR QUESTÃO ======
-function renderizarQuestao() {
-  const questao = questoes[indiceAtual];
-  if (!questao) return finalizarSimulado();
+/* =========================
+   LOGIN / LOGOUT
+========================= */
+function login() {
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const msg = document.getElementById("login-msg");
 
-  perguntaEl.innerText = questao.texto;
-  alternativasEl.innerHTML = "";
-
-  const letras = ["A", "B", "C", "D", "E"];
-
-  questao.alts.forEach((alt, i) => {
-    const letra = letras[i];
-
-    const label = document.createElement("label");
-    label.className = "option";
-
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "alternativa";
-    input.value = letra;
-
-    if (respostas[indiceAtual] === letra) {
-      input.checked = true;
-    }
-
-    input.addEventListener("change", () => {
-      respostas[indiceAtual] = letra;
-      salvarProgresso();
-    });
-
-    label.appendChild(input);
-    label.append(` ${letra}) ${alt.l}`);
-    alternativasEl.appendChild(label);
-  });
-
-  progressoEl.innerText = `Questão ${indiceAtual + 1}/${questoes.length}`;
-
-  btnProximo.style.display =
-    indiceAtual === questoes.length - 1 ? "none" : "inline-block";
-  btnFinalizar.style.display =
-    indiceAtual === questoes.length - 1 ? "inline-block" : "none";
-}
-
-// ====== SALVAR PROGRESSO ======
-function salvarProgresso() {
-  localStorage.setItem(
-    "simuladoProgresso",
-    JSON.stringify({
-      indice: indiceAtual,
-      respostas
-    })
-  );
-}
-
-// ====== PRÓXIMA QUESTÃO ======
-btnProximo.addEventListener("click", () => {
-  if (!respostas[indiceAtual]) {
-    alert("Selecione uma alternativa antes de continuar.");
+  if (!user || !pass) {
+    msg.innerText = "Preencha usuário e senha.";
     return;
   }
 
-  indiceAtual++;
-  salvarProgresso();
-  renderizarQuestao();
-});
+  localStorage.setItem("planejaUser", user);
+  showDashboard();
+}
 
-// ====== FINALIZAR ======
-btnFinalizar.addEventListener("click", finalizarSimulado);
+function register() {
+  alert("Cadastro simplificado: use qualquer usuário e senha.");
+}
 
-function finalizarSimulado() {
-  localStorage.removeItem("simuladoProgresso");
+function logout() {
+  localStorage.removeItem("planejaUser");
+  showScreen("login-screen");
+}
 
+function showDashboard() {
+  const user = localStorage.getItem("planejaUser");
+  if (!user) {
+    showScreen("login-screen");
+    return;
+  }
+
+  document.getElementById("user-display").innerText = user;
+  showScreen("dashboard-screen");
+}
+
+/* =========================
+   SIMULADO
+========================= */
+async function startSimulado() {
+  try {
+    const res = await fetch("/questoes.json");
+    questoes = await res.json();
+
+    embaralhar(questoes);
+    questoes = questoes.slice(0, 80);
+
+    questaoAtual = 0;
+    respostas = new Array(questoes.length).fill(null);
+
+    showScreen("simulado-screen");
+    renderQuestao();
+  } catch (e) {
+    alert("Erro ao carregar questões.");
+    console.error(e);
+  }
+}
+
+function renderQuestao() {
+  const q = questoes[questaoAtual];
+
+  document.getElementById("q-number").innerText =
+    `Questão ${questaoAtual + 1}/${questoes.length}`;
+
+  document.getElementById("q-text").innerText = q.texto;
+
+  const optionsDiv = document.getElementById("q-options");
+  optionsDiv.innerHTML = "";
+
+  const letras = ["A", "B", "C", "D", "E"];
+
+  q.alts.forEach((alt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerText = `${letras[i]}) ${alt.l}`;
+
+    if (respostas[questaoAtual] === letras[i]) {
+      btn.classList.add("selected");
+    }
+
+    btn.onclick = () => {
+      respostas[questaoAtual] = letras[i];
+      renderQuestao();
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById("btn-next").style.display =
+    questaoAtual === questoes.length - 1 ? "none" : "inline-block";
+
+  document.getElementById("btn-finish").style.display =
+    questaoAtual === questoes.length - 1 ? "inline-block" : "none";
+}
+
+function nextQuestion() {
+  if (questaoAtual < questoes.length - 1) {
+    questaoAtual++;
+    renderQuestao();
+  }
+}
+
+function prevQuestion() {
+  if (questaoAtual > 0) {
+    questaoAtual--;
+    renderQuestao();
+  }
+}
+
+function quitSimulado() {
+  if (confirm("Deseja sair do simulado?")) {
+    showDashboard();
+  }
+}
+
+/* =========================
+   FINALIZAÇÃO
+========================= */
+function finishSimulado() {
   let acertos = 0;
+  const porMateria = {};
+
   questoes.forEach((q, i) => {
-    if (respostas[i] === q.correta) acertos++;
+    if (!porMateria[q.materia]) {
+      porMateria[q.materia] = { total: 0, acertos: 0 };
+    }
+
+    porMateria[q.materia].total++;
+
+    if (respostas[i] === q.correta) {
+      acertos++;
+      porMateria[q.materia].acertos++;
+    }
   });
 
   document.getElementById("score-val").innerText = acertos;
   document.getElementById("total-val").innerText = questoes.length;
 
-  // trocar telas
-  document.getElementById("simulado-screen").classList.remove("active");
-  document.getElementById("result-screen").classList.add("active");
+  const list = document.getElementById("subject-list");
+  list.innerHTML = "";
+
+  Object.keys(porMateria).forEach(mat => {
+    const li = document.createElement("li");
+    li.innerText = `${mat}: ${porMateria[mat].acertos}/${porMateria[mat].total}`;
+    list.appendChild(li);
+  });
+
+  showScreen("result-screen");
 }
 
-// ====== INICIAR ======
-carregarQuestoes();
+/* =========================
+   UTIL
+========================= */
+function embaralhar(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/* =========================
+   AUTO LOGIN
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("planejaUser")) {
+    showDashboard();
+  } else {
+    showScreen("login-screen");
+  }
+});
