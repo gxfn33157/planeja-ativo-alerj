@@ -1,4 +1,3 @@
-let currentUser = null;
 let questoes = [];
 let currentIndex = 0;
 let respostas = [];
@@ -8,9 +7,9 @@ let respostas = [];
 ====================== */
 
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s =>
-    s.classList.remove("active")
-  );
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+  });
   document.getElementById(id).classList.add("active");
 }
 
@@ -21,51 +20,42 @@ function showScreen(id) {
 function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  const msg = document.getElementById("login-msg");
 
   fetch("/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password })
   })
-    .then(res => {
-      if (!res.ok) throw new Error();
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
-      currentUser = data.username;
-      document.getElementById("user-display").innerText = currentUser;
+      if (data.error) {
+        document.getElementById("login-msg").innerText = data.error;
+        return;
+      }
+      localStorage.setItem("user", data.username);
+      document.getElementById("user-display").innerText = data.username;
       showScreen("dashboard-screen");
-    })
-    .catch(() => {
-      msg.innerText = "Usuário ou senha inválidos.";
     });
 }
 
 function register() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  const msg = document.getElementById("login-msg");
 
   fetch("/api/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password })
   })
-    .then(res => {
-      if (!res.ok) throw new Error();
-      return res.json();
-    })
-    .then(() => {
-      msg.innerText = "Conta criada! Agora faça login.";
-    })
-    .catch(() => {
-      msg.innerText = "Erro ao criar conta.";
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("login-msg").innerText =
+        data.error || "Conta criada! Faça login.";
     });
 }
 
 function logout() {
-  currentUser = null;
+  localStorage.removeItem("user");
   showScreen("login-screen");
 }
 
@@ -76,7 +66,7 @@ function logout() {
 function startSimulado() {
   fetch("/questoes.json")
     .then(res => {
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("Erro ao carregar JSON");
       return res.json();
     })
     .then(data => {
@@ -86,7 +76,8 @@ function startSimulado() {
       showScreen("simulado-screen");
       renderQuestao();
     })
-    .catch(() => {
+    .catch(err => {
+      console.error(err);
       alert("Erro ao carregar questões.");
     });
 }
@@ -97,18 +88,35 @@ function renderQuestao() {
   document.getElementById("q-number").innerText =
     `Questão ${currentIndex + 1}/${questoes.length}`;
 
-  document.getElementById("q-text").innerText = q.pergunta;
+  document.getElementById("q-text").innerText = q.texto;
 
   const optionsDiv = document.getElementById("q-options");
   optionsDiv.innerHTML = "";
 
-  q.opcoes.forEach((opt, i) => {
+  const letras = ["A", "B", "C", "D", "E"];
+
+  q.alts.forEach((alt, i) => {
+    const letra = letras[i];
+
     const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="radio" name="option" value="${i}"
-        ${respostas[currentIndex] === i ? "checked" : ""}>
-      ${opt}
-    `;
+    label.className = "option";
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "option";
+    input.value = letra;
+
+    if (respostas[currentIndex] === letra) {
+      input.checked = true;
+    }
+
+    input.addEventListener("change", () => {
+      respostas[currentIndex] = letra;
+    });
+
+    label.appendChild(input);
+    label.append(` ${letra}) ${alt.l}`);
+
     optionsDiv.appendChild(label);
   });
 
@@ -119,45 +127,53 @@ function renderQuestao() {
     currentIndex === questoes.length - 1 ? "inline-block" : "none";
 }
 
-function salvarResposta() {
-  const checked = document.querySelector('input[name="option"]:checked');
-  if (checked) respostas[currentIndex] = Number(checked.value);
-}
-
 function nextQuestion() {
-  salvarResposta();
-  if (currentIndex < questoes.length - 1) {
-    currentIndex++;
-    renderQuestao();
+  if (!respostas[currentIndex]) {
+    alert("Selecione uma alternativa antes de continuar.");
+    return;
   }
+  currentIndex++;
+  renderQuestao();
 }
 
 function prevQuestion() {
-  salvarResposta();
   if (currentIndex > 0) {
     currentIndex--;
     renderQuestao();
   }
 }
 
-function finishSimulado() {
-  salvarResposta();
+function quitSimulado() {
+  showScreen("dashboard-screen");
+}
 
-  let score = 0;
+/* ======================
+   FINALIZAR
+====================== */
+
+function finishSimulado() {
+  let acertos = 0;
+
   questoes.forEach((q, i) => {
-    if (respostas[i] === q.correta) score++;
+    if (respostas[i] === q.correta) acertos++;
   });
 
-  document.getElementById("score-val").innerText = score;
+  document.getElementById("score-val").innerText = acertos;
   document.getElementById("total-val").innerText = questoes.length;
 
   showScreen("result-screen");
 }
 
-function quitSimulado() {
+function showDashboard() {
   showScreen("dashboard-screen");
 }
 
-function showDashboard() {
+/* ======================
+   AUTOLOGIN
+====================== */
+
+const savedUser = localStorage.getItem("user");
+if (savedUser) {
+  document.getElementById("user-display").innerText = savedUser;
   showScreen("dashboard-screen");
 }
