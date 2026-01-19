@@ -74,7 +74,7 @@ function logout() {
 ====================== */
 
 function startSimulado() {
-  fetch("/api/questoes")
+  fetch("/questoes.json")
     .then(res => {
       if (!res.ok) throw new Error();
       return res.json();
