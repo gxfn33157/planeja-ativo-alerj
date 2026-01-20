@@ -1,113 +1,175 @@
-let usuarioAtual = "";
+// ================== VARIÁVEIS GLOBAIS ==================
 let questoes = [];
-let indice = 0;
+let indiceAtual = 0;
 let respostas = {};
+let usuarioLogado = null;
 let estatisticas = {};
 
-const letras = ["A", "B", "C", "D", "E"];
+const telas = {
+  login: document.getElementById("login-screen"),
+  dashboard: document.getElementById("dashboard-screen"),
+  simulado: document.getElementById("simulado-screen"),
+  resultado: document.getElementById("result-screen")
+};
 
-document.getElementById("btnLogin").onclick = login;
+const qText = document.getElementById("q-text");
+const qOptions = document.getElementById("q-options");
+const qNumber = document.getElementById("q-number");
 
-// ===== LOGIN =====
-async function login() {
-  const usuario = loginUsuario.value.trim();
-  const senha = loginSenha.value.trim();
+// ================== UTIL ==================
+function mostrarTela(nome) {
+  Object.values(telas).forEach(t => t.classList.remove("active"));
+  telas[nome].classList.add("active");
+}
 
-  if (!usuario || !senha) {
-    loginMsg.innerText = "Preencha usuário e senha";
+function salvarProgresso() {
+  localStorage.setItem(
+    `progresso_${usuarioLogado}`,
+    JSON.stringify({ indiceAtual, respostas })
+  );
+}
+
+function carregarProgresso() {
+  const salvo = localStorage.getItem(`progresso_${usuarioLogado}`);
+  if (salvo) {
+    const data = JSON.parse(salvo);
+    indiceAtual = data.indiceAtual || 0;
+    respostas = data.respostas || {};
+  }
+}
+
+// ================== LOGIN ==================
+function login() {
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const msg = document.getElementById("login-msg");
+
+  if (!user || !pass) {
+    msg.innerText = "Informe usuário e senha.";
     return;
   }
 
-  usuarioAtual = usuario;
-  nomeUsuario.innerText = usuario;
+  const usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
 
-  document.getElementById("login-screen").classList.add("hidden");
-  document.getElementById("app-screen").classList.remove("hidden");
+  if (!usuarios[user]) {
+    msg.innerText = "Usuário não encontrado.";
+    return;
+  }
 
-  carregarDados();
+  if (usuarios[user].senha !== pass) {
+    msg.innerText = "Senha incorreta.";
+    return;
+  }
+
+  usuarioLogado = user;
+  localStorage.setItem("usuarioLogado", user);
+  document.getElementById("user-display").innerText = user;
+
+  mostrarTela("dashboard");
 }
 
-// ===== LOGOUT =====
-function logout() {
-  localStorage.removeItem("progresso");
-  location.reload();
+function register() {
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const msg = document.getElementById("login-msg");
+
+  if (!user || !pass) {
+    msg.innerText = "Preencha todos os campos.";
+    return;
+  }
+
+  const usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
+
+  if (usuarios[user]) {
+    msg.innerText = "Usuário já existe.";
+    return;
+  }
+
+  usuarios[user] = { senha: pass, historico: [] };
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+  msg.innerText = "Conta criada! Faça login.";
 }
 
-// ===== INICIAR =====
-async function iniciarSimulado() {
-  const res = await fetch("questoes.json");
-  questoes = shuffle(await res.json()).slice(0, 80);
+// ================== SIMULADO ==================
+async function startSimulado() {
+  try {
+    const res = await fetch("/questoes.json");
+    questoes = await res.json();
 
-  indice = 0;
-  respostas = {};
-  estatisticas = {};
-
-  document.getElementById("simulado").classList.remove("hidden");
-  document.getElementById("resultado").classList.add("hidden");
-
-  mostrarQuestao();
+    carregarProgresso();
+    mostrarTela("simulado");
+    renderizarQuestao();
+  } catch (e) {
+    alert("Erro ao carregar questões.");
+  }
 }
 
-// ===== MOSTRAR =====
-function mostrarQuestao() {
-  const q = questoes[indice];
+function renderizarQuestao() {
+  const q = questoes[indiceAtual];
+  if (!q) return finalizarSimulado();
 
-  document.getElementById("contador").innerText =
-    `Questão ${indice + 1} de ${questoes.length}`;
+  qNumber.innerText = `Questão ${indiceAtual + 1}/${questoes.length}`;
+  qText.innerText = q.pergunta;
+  qOptions.innerHTML = "";
 
-  document.getElementById("pergunta").innerText = q.texto;
+  q.alternativas.forEach((alt, i) => {
+    const letra = String.fromCharCode(65 + i);
 
-  const div = document.getElementById("opcoes");
-  div.innerHTML = "";
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerHTML = `<strong>${letra})</strong> ${alt}`;
 
-  q.alts.forEach((alt, i) => {
-    const el = document.createElement("div");
-    el.className = "opcao";
-    el.innerText = `${letras[i]}) ${alt.l}`;
-
-    if (respostas[indice] === letras[i]) {
-      el.classList.add("selecionada");
+    if (respostas[indiceAtual] === letra) {
+      btn.classList.add("selected");
     }
 
-    el.onclick = () => {
-      respostas[indice] = letras[i];
+    btn.onclick = () => {
+      respostas[indiceAtual] = letra;
       salvarProgresso();
-      mostrarQuestao();
+      renderizarQuestao();
     };
 
-    div.appendChild(el);
+    qOptions.appendChild(btn);
   });
 }
 
-// ===== NAVEGAÇÃO =====
-function proximaQuestao() {
-  if (indice < questoes.length - 1) {
-    indice++;
-    salvarProgresso();
-    mostrarQuestao();
-  }
+function nextQuestion() {
+  indiceAtual++;
+  salvarProgresso();
+  renderizarQuestao();
 }
 
-function anteriorQuestao() {
-  if (indice > 0) {
-    indice--;
-    mostrarQuestao();
-  }
+function prevQuestion() {
+  if (indiceAtual > 0) indiceAtual--;
+  renderizarQuestao();
 }
 
-// ===== FINALIZAR =====
-function finalizarSimulado() {
-  if (Object.keys(respostas).length < questoes.length) {
-    alert("Existem questões sem resposta.");
+// ================== PENDENTES ==================
+function irParaPendente() {
+  const pendente = questoes.findIndex((_, i) => !respostas[i]);
+  if (pendente === -1) {
+    alert("Nenhuma questão pendente 🎉");
     return;
   }
+  indiceAtual = pendente;
+  renderizarQuestao();
+}
 
+// ================== FINALIZAR ==================
+function finishSimulado() {
   let acertos = 0;
+  let pendentes = 0;
   estatisticas = {};
 
   questoes.forEach((q, i) => {
     estatisticas[q.materia] ??= { total: 0, acertos: 0 };
     estatisticas[q.materia].total++;
+
+    if (!respostas[i]) {
+      pendentes++;
+      return;
+    }
 
     if (respostas[i] === q.correta) {
       acertos++;
@@ -115,49 +177,90 @@ function finalizarSimulado() {
     }
   });
 
-  document.getElementById("simulado").classList.add("hidden");
-  document.getElementById("resultado").classList.remove("hidden");
+  if (pendentes > 0) {
+    if (!confirm(`Você tem ${pendentes} pendente(s). Finalizar mesmo assim?`)) {
+      return;
+    }
+  }
 
-  document.getElementById("resultado").innerHTML = `
-    <h2>Resultado Final</h2>
-    <h1>${acertos} / ${questoes.length}</h1>
-    <h3>Revisar Conteúdos:</h3>
-    <ul>
-      ${Object.keys(estatisticas).map(m =>
-        `<li>${m} —
-          <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(m)}">
-            Vídeos
-          </a>
-        </li>`
-      ).join("")}
-    </ul>
-  `;
-
-  localStorage.removeItem("progresso");
-  renderEstatisticas();
+  salvarResultado(acertos);
+  mostrarResultado(acertos, pendentes);
+  localStorage.removeItem(`progresso_${usuarioLogado}`);
 }
 
-// ===== PROGRESSO =====
-function salvarProgresso() {
-  localStorage.setItem("progresso", JSON.stringify({
-    indice,
-    respostas,
-    questoes
-  }));
+// ================== RESULTADO ==================
+function salvarResultado(pontuacao) {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios"));
+  usuarios[usuarioLogado].historico.push({
+    data: new Date().toLocaleString(),
+    nota: pontuacao
+  });
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
 }
 
-// ===== DADOS =====
-function carregarDados() {
-  // preparado para backend
+function mostrarResultado(acertos, pendentes) {
+  mostrarTela("resultado");
+
+  document.getElementById("score-val").innerText = acertos;
+  document.getElementById("total-val").innerText = questoes.length;
+
+  const lista = document.getElementById("subject-list");
+  lista.innerHTML = "";
+
+  Object.keys(estatisticas).forEach(mat => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${mat}</strong>:
+      ${estatisticas[mat].acertos}/${estatisticas[mat].total}
+      —
+      <a target="_blank"
+         href="https://www.youtube.com/results?search_query=${encodeURIComponent(mat)}">
+         Revisar
+      </a>
+    `;
+    lista.appendChild(li);
+  });
+
+  desenharGrafico();
 }
 
-function renderEstatisticas() {
-  estatisticasEl.innerHTML = Object.entries(estatisticas)
-    .map(([m, d]) => `<li>${m}: ${d.acertos}/${d.total}</li>`)
-    .join("");
+// ================== GRÁFICO ==================
+function desenharGrafico() {
+  let canvas = document.getElementById("grafico");
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+    canvas.id = "grafico";
+    canvas.width = 400;
+    canvas.height = 300;
+    document.getElementById("recommendations").appendChild(canvas);
+  }
+
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const materias = Object.keys(estatisticas);
+  const largura = 300 / materias.length;
+  const base = 250;
+
+  materias.forEach((m, i) => {
+    const taxa =
+      estatisticas[m].acertos / estatisticas[m].total;
+    const altura = taxa * 200;
+
+    ctx.fillStyle = "#3b82f6";
+    ctx.fillRect(50 + i * largura, base - altura, 30, altura);
+
+    ctx.fillStyle = "#fff";
+    ctx.fillText(m.slice(0, 6), 50 + i * largura, base + 15);
+  });
 }
 
-// ===== UTIL =====
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+// ================== DASHBOARD ==================
+function logout() {
+  localStorage.removeItem("usuarioLogado");
+  location.reload();
+}
+
+function showDashboard() {
+  mostrarTela("dashboard");
 }
