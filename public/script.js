@@ -1,144 +1,103 @@
+let usuarioAtual = "";
 let questoes = [];
 let indice = 0;
-let respostas = [];
+let respostas = {};
 
-const linksConteudo = {
-  "Direito Constitucional": {
-    "Poder Legislativo": {
-      youtube: "https://www.youtube.com/results?search_query=poder+legislativo+constitucional",
-      site: "https://www.jusbrasil.com.br/artigos/poder-legislativo/"
-    }
-  },
-  "Direito Administrativo": {
-    "Atos Administrativos": {
-      youtube: "https://www.youtube.com/results?search_query=atos+administrativos",
-      site: "https://www.direitonet.com.br/resumos/exibir/3/Atos-Administrativos"
-    }
+async function login() {
+  const usuario = usuarioInput.value;
+  const senha = senhaInput.value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usuario, senha })
+  });
+
+  if (!res.ok) {
+    msg.innerText = "Erro no login";
+    return;
   }
-};
+
+  usuarioAtual = usuario;
+  user.innerText = usuario;
+  loginDiv.style.display = "none";
+  app.style.display = "block";
+
+  carregarDados();
+}
 
 async function iniciar() {
-  document.getElementById("btnIniciar").classList.add("hidden");
-  document.getElementById("simulado").classList.remove("hidden");
-
   const res = await fetch("/questoes.json");
-  questoes = await res.json();
-
-  questoes = questoes.sort(() => Math.random() - 0.5).slice(0, 80);
-  respostas = Array(questoes.length).fill(null);
-
-  carregar();
+  questoes = embaralhar(await res.json()).slice(0, 80);
+  indice = 0;
+  respostas = {};
+  quiz.style.display = "block";
+  mostrar();
 }
 
-function carregar() {
+function mostrar() {
   const q = questoes[indice];
-  document.getElementById("contador").innerText = `Questão ${indice + 1} / ${questoes.length}`;
-  document.getElementById("pergunta").innerText = q.texto;
+  pergunta.innerText = q.texto;
+  opcoes.innerHTML = "";
 
-  const div = document.getElementById("alternativas");
-  div.innerHTML = "";
-
-  q.alternativas.forEach((alt, i) => {
+  q.alts.forEach((a, i) => {
     const btn = document.createElement("button");
-    btn.innerText = alt;
-    if (respostas[indice] === i) btn.classList.add("selecionada");
-
-    btn.onclick = () => {
-      respostas[indice] = i;
-      carregar();
-    };
-
-    div.appendChild(btn);
+    btn.innerText = a.l;
+    btn.onclick = () => respostas[indice] = "ABCDE"[i];
+    opcoes.appendChild(btn);
   });
 }
 
-function proxima() {
-  if (indice < questoes.length - 1) {
-    indice++;
-    carregar();
-  }
+async function proxima() {
+  indice++;
+  if (indice >= questoes.length) return finalizar();
+  mostrar();
 }
 
-function anterior() {
-  if (indice > 0) {
-    indice--;
-    carregar();
-  }
-}
-
-function finalizar() {
+async function finalizar() {
   let acertos = 0;
-  const revisao = {};
-
   questoes.forEach((q, i) => {
     if (respostas[i] === q.correta) acertos++;
-    else {
-      revisao[q.materia] ??= {};
-      revisao[q.materia][q.conteudo] = true;
-    }
   });
 
-  salvarHistorico(acertos);
-  salvarRanking(acertos);
+  const nota = Math.round((acertos / questoes.length) * 100);
 
-  document.getElementById("simulado").classList.add("hidden");
-  document.getElementById("resultado").classList.remove("hidden");
-  document.getElementById("nota").innerText = `Nota: ${acertos} / ${questoes.length}`;
+  resultado.innerHTML = `
+    <h2>Nota: ${nota}%</h2>
+    <p>Revisar:</p>
+    <ul>
+      ${questoes.map(q => `
+        <li>${q.conteudo} -
+        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q.conteudo)}" target="_blank">Vídeos</a></li>
+      `).join("")}
+    </ul>
+  `;
 
-  renderAnalise(revisao);
-  renderHistorico();
-  renderRanking();
-}
-
-function renderAnalise(revisao) {
-  const div = document.getElementById("analise");
-  div.innerHTML = "";
-
-  for (let materia in revisao) {
-    for (let conteudo in revisao[materia]) {
-      const link = linksConteudo[materia]?.[conteudo];
-      div.innerHTML += `
-        <p>
-          <b>${materia} – ${conteudo}</b><br>
-          ${link ? `
-          <a href="${link.youtube}" target="_blank">▶ YouTube</a> |
-          <a href="${link.site}" target="_blank">📘 Artigo</a>
-          ` : "Links em breve"}
-        </p>
-      `;
-    }
-  }
-}
-
-function salvarHistorico(nota) {
-  const hist = JSON.parse(localStorage.getItem("historico")) || [];
-  hist.push({ data: new Date().toLocaleString(), nota });
-  localStorage.setItem("historico", JSON.stringify(hist.slice(-5)));
-}
-
-function salvarRanking(nota) {
-  const rank = JSON.parse(localStorage.getItem("ranking")) || [];
-  rank.push(nota);
-  rank.sort((a, b) => b - a);
-  localStorage.setItem("ranking", JSON.stringify(rank.slice(0, 5)));
-}
-
-function renderHistorico() {
-  const ul = document.getElementById("historico");
-  ul.innerHTML = "";
-  (JSON.parse(localStorage.getItem("historico")) || []).forEach(h => {
-    ul.innerHTML += `<li>${h.data} – ${h.nota}</li>`;
+  await fetch("/resultado", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      usuario: usuarioAtual,
+      resultado: { nota, data: new Date().toLocaleDateString() }
+    })
   });
+
+  carregarDados();
 }
 
-function renderRanking() {
-  const ol = document.getElementById("ranking");
-  ol.innerHTML = "";
-  (JSON.parse(localStorage.getItem("ranking")) || []).forEach(r => {
-    ol.innerHTML += `<li>${r}</li>`;
-  });
+async function carregarDados() {
+  const res = await fetch(`/dados/${usuarioAtual}`);
+  const data = await res.json();
+
+  historico.innerHTML = data.historico.map(h =>
+    `<li>${h.data} - ${h.nota}%</li>`
+  ).join("");
+
+  ranking.innerHTML = data.ranking.map(r =>
+    `<li>${r.usuario} - ${r.nota}%</li>`
+  ).join("");
 }
 
-function reiniciar() {
-  location.reload();
+function embaralhar(arr) {
+  return arr.sort(() => Math.random() - 0.5);
 }
