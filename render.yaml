@@ -1,12 +1,7 @@
 services:
   - type: web
-    name: planeja-ativo-alerj
+    name: simulado-alerj
     env: node
     plan: free
     buildCommand: npm install
     startCommand: npm start
-    envVars:
-      - key: SESSION_SECRET
-        generateValue: true
-      - key: NODE_ENV
-        value: production
