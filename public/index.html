@@ -2,42 +2,66 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Planeja Ativo – ALERJ</title>
+  <title>Planeja Ativo | Simulado ALERJ 2026</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="login">
-  <h1>Planeja Ativo – ALERJ</h1>
+<div id="login-screen" class="screen">
+  <div class="card login-card">
+    <h1>Planeja Ativo</h1>
+    <p>Simulados ALERJ 2026</p>
 
-  <input id="loginUsuario" placeholder="Usuário">
-  <input id="loginSenha" type="password" placeholder="Senha">
-  <button id="btnLogin">Entrar</button>
+    <input id="loginUsuario" placeholder="Usuário">
+    <input id="loginSenha" type="password" placeholder="Senha">
 
-  <p id="loginMsg"></p>
+    <button id="btnLogin">Entrar</button>
+    <p id="loginMsg" class="error"></p>
+  </div>
 </div>
 
-<div id="app" style="display:none;">
-  <h2>Bem-vindo, <span id="nomeUsuario"></span></h2>
+<div id="app-screen" class="screen hidden">
+  <header>
+    <h2>Bem-vindo, <span id="nomeUsuario"></span></h2>
+    <button onclick="logout()">Sair</button>
+  </header>
 
-  <button onclick="iniciarSimulado()">Iniciar Simulado</button>
+  <main>
+    <button class="primary" onclick="iniciarSimulado()">Iniciar Simulado</button>
 
-  <div id="quiz" style="display:none;">
-    <h3 id="pergunta"></h3>
-    <div id="opcoes"></div>
-    <button onclick="proximaQuestao()">Próxima</button>
-  </div>
+    <section id="simulado" class="hidden">
+      <div class="progress">
+        <span id="contador"></span>
+      </div>
 
-  <div id="resultado"></div>
+      <h3 id="pergunta"></h3>
 
-  <h3>Estatísticas por Matéria</h3>
-  <ul id="estatisticas"></ul>
+      <div id="opcoes" class="opcoes"></div>
 
-  <h3>Histórico</h3>
-  <ul id="historico"></ul>
+      <div class="acoes">
+        <button onclick="anteriorQuestao()">Anterior</button>
+        <button onclick="proximaQuestao()">Próxima</button>
+        <button class="danger" onclick="finalizarSimulado()">Finalizar</button>
+      </div>
+    </section>
 
-  <h3>Ranking</h3>
-  <ul id="ranking"></ul>
+    <section id="resultado" class="hidden"></section>
+
+    <section>
+      <h3>Estatísticas por Matéria</h3>
+      <ul id="estatisticas"></ul>
+    </section>
+
+    <section>
+      <h3>Histórico</h3>
+      <ul id="historico"></ul>
+    </section>
+
+    <section>
+      <h3>Ranking</h3>
+      <ul id="ranking"></ul>
+    </section>
+  </main>
 </div>
 
 <script src="script.js"></script>
