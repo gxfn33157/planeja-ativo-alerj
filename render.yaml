@@ -1,7 +1,6 @@
 services:
   - type: web
-    name: simulado-alerj
+    name: planeja-ativo-alerj
     env: node
-    plan: free
     buildCommand: npm install
     startCommand: npm start
