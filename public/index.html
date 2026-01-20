@@ -1,47 +1,39 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Simulado ALERJ 2026</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Planeja Ativo - ALERJ</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
-<h1 class="titulo">Simulado ALERJ 2026</h1>
-
-<button id="btnIniciar" onclick="iniciar()">Iniciar Simulado</button>
-
-<div id="simulado" class="hidden">
-  <div class="topo">
-    <span id="contador"></span>
-    <button onclick="finalizar()">Finalizar</button>
-  </div>
-
-  <h2 id="pergunta"></h2>
-  <div id="alternativas"></div>
-
-  <div class="acoes">
-    <button onclick="anterior()">Anterior</button>
-    <button onclick="proxima()">Próxima</button>
-  </div>
+<div id="login">
+  <h1>Planeja Ativo</h1>
+  <input id="usuario" placeholder="Usuário">
+  <input id="senha" type="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <p id="msg"></p>
 </div>
 
-<div id="resultado" class="hidden">
-  <h2>Resultado</h2>
-  <p id="nota"></p>
+<div id="app" style="display:none;">
+  <h2>Olá, <span id="user"></span></h2>
+  <button onclick="iniciar()">Iniciar Simulado</button>
 
-  <h3>Conteúdos para revisar</h3>
-  <div id="analise"></div>
+  <div id="quiz" style="display:none;">
+    <h3 id="pergunta"></h3>
+    <div id="opcoes"></div>
+    <button onclick="proxima()">Próxima</button>
+  </div>
+
+  <div id="resultado"></div>
 
   <h3>Histórico</h3>
   <ul id="historico"></ul>
 
   <h3>Ranking</h3>
-  <ol id="ranking"></ol>
-
-  <button onclick="reiniciar()">Novo Simulado</button>
+  <ul id="ranking"></ul>
 </div>
 
-<script src="script.js"></script>
+<script src="/script.js"></script>
 </body>
 </html>
