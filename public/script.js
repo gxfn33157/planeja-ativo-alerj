@@ -1,40 +1,53 @@
 let questoes = [];
 let indice = 0;
-let respostas = JSON.parse(localStorage.getItem("respostas")) || [];
+let respostas = [];
+
+const linksConteudo = {
+  "Direito Constitucional": {
+    "Poder Legislativo": {
+      youtube: "https://www.youtube.com/results?search_query=poder+legislativo+constitucional",
+      site: "https://www.jusbrasil.com.br/artigos/poder-legislativo/"
+    }
+  },
+  "Direito Administrativo": {
+    "Atos Administrativos": {
+      youtube: "https://www.youtube.com/results?search_query=atos+administrativos",
+      site: "https://www.direitonet.com.br/resumos/exibir/3/Atos-Administrativos"
+    }
+  }
+};
 
 async function iniciar() {
-  document.getElementById("login").classList.add("hidden");
+  document.getElementById("btnIniciar").classList.add("hidden");
   document.getElementById("simulado").classList.remove("hidden");
 
   const res = await fetch("/questoes.json");
   questoes = await res.json();
 
-  questoes = questoes.sort(() => Math.random() - 0.5);
+  questoes = questoes.sort(() => Math.random() - 0.5).slice(0, 80);
+  respostas = Array(questoes.length).fill(null);
 
   carregar();
 }
 
 function carregar() {
   const q = questoes[indice];
-  document.getElementById("contador").innerText = `Questão ${indice + 1}/${questoes.length}`;
+  document.getElementById("contador").innerText = `Questão ${indice + 1} / ${questoes.length}`;
   document.getElementById("pergunta").innerText = q.texto;
 
   const div = document.getElementById("alternativas");
   div.innerHTML = "";
 
-  q.alts.forEach((a, i) => {
+  q.alternativas.forEach((alt, i) => {
     const btn = document.createElement("button");
-    btn.innerText = `${String.fromCharCode(65 + i)}) ${a.l}`;
-
-    if (respostas[indice] === String.fromCharCode(65 + i)) {
-      btn.classList.add("selecionada");
-    }
+    btn.innerText = alt;
+    if (respostas[indice] === i) btn.classList.add("selecionada");
 
     btn.onclick = () => {
-      respostas[indice] = String.fromCharCode(65 + i);
-      localStorage.setItem("respostas", JSON.stringify(respostas));
+      respostas[indice] = i;
       carregar();
     };
+
     div.appendChild(btn);
   });
 }
@@ -54,44 +67,78 @@ function anterior() {
 }
 
 function finalizar() {
-  const pendentes = respostas.filter(r => !r).length;
-  if (pendentes > 0) {
-    alert(`Você possui ${pendentes} questões sem resposta.`);
-    return;
-  }
-
   let acertos = 0;
-  let porMateria = {};
+  const revisao = {};
 
   questoes.forEach((q, i) => {
-    if (respostas[i] === q.correta) {
-      acertos++;
-    } else {
-      porMateria[q.materia] = porMateria[q.materia] || new Set();
-      porMateria[q.materia].add(q.conteudo);
+    if (respostas[i] === q.correta) acertos++;
+    else {
+      revisao[q.materia] ??= {};
+      revisao[q.materia][q.conteudo] = true;
     }
   });
 
+  salvarHistorico(acertos);
+  salvarRanking(acertos);
+
   document.getElementById("simulado").classList.add("hidden");
   document.getElementById("resultado").classList.remove("hidden");
-  document.getElementById("nota").innerText = `${acertos} / ${questoes.length}`;
+  document.getElementById("nota").innerText = `Nota: ${acertos} / ${questoes.length}`;
 
-  const analise = document.getElementById("analise");
-  analise.innerHTML = "<h3>Conteúdos para revisar:</h3>";
-
-  for (let m in porMateria) {
-    analise.innerHTML += `<p><b>${m}</b>: ${[...porMateria[m]].join(", ")}</p>`;
-  }
-
-  localStorage.removeItem("respostas");
+  renderAnalise(revisao);
+  renderHistorico();
+  renderRanking();
 }
 
-function sair() {
-  localStorage.setItem("respostas", JSON.stringify(respostas));
-  location.reload();
+function renderAnalise(revisao) {
+  const div = document.getElementById("analise");
+  div.innerHTML = "";
+
+  for (let materia in revisao) {
+    for (let conteudo in revisao[materia]) {
+      const link = linksConteudo[materia]?.[conteudo];
+      div.innerHTML += `
+        <p>
+          <b>${materia} – ${conteudo}</b><br>
+          ${link ? `
+          <a href="${link.youtube}" target="_blank">▶ YouTube</a> |
+          <a href="${link.site}" target="_blank">📘 Artigo</a>
+          ` : "Links em breve"}
+        </p>
+      `;
+    }
+  }
+}
+
+function salvarHistorico(nota) {
+  const hist = JSON.parse(localStorage.getItem("historico")) || [];
+  hist.push({ data: new Date().toLocaleString(), nota });
+  localStorage.setItem("historico", JSON.stringify(hist.slice(-5)));
+}
+
+function salvarRanking(nota) {
+  const rank = JSON.parse(localStorage.getItem("ranking")) || [];
+  rank.push(nota);
+  rank.sort((a, b) => b - a);
+  localStorage.setItem("ranking", JSON.stringify(rank.slice(0, 5)));
+}
+
+function renderHistorico() {
+  const ul = document.getElementById("historico");
+  ul.innerHTML = "";
+  (JSON.parse(localStorage.getItem("historico")) || []).forEach(h => {
+    ul.innerHTML += `<li>${h.data} – ${h.nota}</li>`;
+  });
+}
+
+function renderRanking() {
+  const ol = document.getElementById("ranking");
+  ol.innerHTML = "";
+  (JSON.parse(localStorage.getItem("ranking")) || []).forEach(r => {
+    ol.innerHTML += `<li>${r}</li>`;
+  });
 }
 
 function reiniciar() {
-  localStorage.clear();
   location.reload();
 }
