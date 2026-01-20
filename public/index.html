@@ -1,67 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Planeja Ativo | Simulado ALERJ 2026</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Planeja Ativo ALERJ</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="login-screen" class="screen">
-  <div class="card login-card">
-    <h1>Planeja Ativo</h1>
-    <p>Simulados ALERJ 2026</p>
+<!-- LOGIN -->
+<div id="login-screen" class="screen active">
+  <div class="login-box">
+    <h2>Planeja Ativo ALERJ</h2>
 
-    <input id="loginUsuario" placeholder="Usuário">
-    <input id="loginSenha" type="password" placeholder="Senha">
+    <input id="username" placeholder="Usuário" />
+    <input id="password" type="password" placeholder="Senha" />
 
-    <button id="btnLogin">Entrar</button>
-    <p id="loginMsg" class="error"></p>
+    <button onclick="login()">Entrar</button>
+    <button class="secondary" onclick="register()">Criar conta</button>
+
+    <p id="login-msg"></p>
   </div>
 </div>
 
-<div id="app-screen" class="screen hidden">
-  <header>
-    <h2>Bem-vindo, <span id="nomeUsuario"></span></h2>
+<!-- DASHBOARD -->
+<div id="dashboard-screen" class="screen">
+  <nav>
+    <span>Bem-vindo, <strong id="user-display"></strong></span>
     <button onclick="logout()">Sair</button>
-  </header>
+  </nav>
 
-  <main>
-    <button class="primary" onclick="iniciarSimulado()">Iniciar Simulado</button>
+  <div class="container">
+    <h2>Simulado ALERJ 2026</h2>
+    <button onclick="startSimulado()">Iniciar Simulado</button>
+  </div>
+</div>
 
-    <section id="simulado" class="hidden">
-      <div class="progress">
-        <span id="contador"></span>
-      </div>
+<!-- SIMULADO -->
+<div id="simulado-screen" class="screen">
+  <div class="container">
+    <h3 id="q-number"></h3>
+    <p id="q-text"></p>
 
-      <h3 id="pergunta"></h3>
+    <div id="q-options"></div>
 
-      <div id="opcoes" class="opcoes"></div>
+    <div style="margin-top:20px">
+      <button class="secondary" onclick="prevQuestion()">Voltar</button>
+      <button onclick="nextQuestion()">Próxima</button>
+      <button class="secondary" onclick="irParaPendente()">Pendente</button>
+      <button onclick="finishSimulado()">Finalizar</button>
+    </div>
+  </div>
+</div>
 
-      <div class="acoes">
-        <button onclick="anteriorQuestao()">Anterior</button>
-        <button onclick="proximaQuestao()">Próxima</button>
-        <button class="danger" onclick="finalizarSimulado()">Finalizar</button>
-      </div>
-    </section>
+<!-- RESULTADO -->
+<div id="result-screen" class="screen">
+  <div class="container">
+    <h2>Resultado Final</h2>
+    <p>Nota: <strong id="score-val"></strong> / <span id="total-val"></span></p>
 
-    <section id="resultado" class="hidden"></section>
+    <h3>Desempenho por Matéria</h3>
+    <ul id="subject-list"></ul>
 
-    <section>
-      <h3>Estatísticas por Matéria</h3>
-      <ul id="estatisticas"></ul>
-    </section>
-
-    <section>
-      <h3>Histórico</h3>
-      <ul id="historico"></ul>
-    </section>
-
-    <section>
-      <h3>Ranking</h3>
-      <ul id="ranking"></ul>
-    </section>
-  </main>
+    <button onclick="showDashboard()">Voltar ao Dashboard</button>
+  </div>
 </div>
 
 <script src="script.js"></script>
