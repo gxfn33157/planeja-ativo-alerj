@@ -1,172 +1,106 @@
-/* ===============================
-   ESTADO GLOBAL
-================================ */
-let usuarioLogado = null;
 let questoes = [];
 let questaoAtual = 0;
 let respostas = [];
+let usuarioLogado = null;
 
-/* ===============================
-   TELAS
-================================ */
-function mostrarTela(id) {
-  document.querySelectorAll(".screen").forEach(tela => {
-    tela.classList.remove("active");
+/* ================= LOGIN ================= */
+
+async function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
 
-  const tela = document.getElementById(id);
-  if (tela) tela.classList.add("active");
-}
+  const data = await res.json();
 
-/* ===============================
-   LOGIN
-================================ */
-async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const msg = document.getElementById("login-msg");
-
-  msg.textContent = "";
-
-  if (!username || !password) {
-    msg.textContent = "Preencha usuário e senha.";
+  if (!data.success) {
+    alert(data.error || "Erro ao logar");
     return;
   }
 
-  try {
-    const res = await fetch("/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      msg.textContent = data.error || "Erro ao entrar.";
-      return;
-    }
-
-    usuarioLogado = data.user;
-    document.getElementById("user-display").textContent = usuarioLogado.username;
-    mostrarTela("dashboard-screen");
-
-  } catch (e) {
-    msg.textContent = "Erro de conexão.";
-  }
+  usuarioLogado = data.user;
+  document.getElementById("login").style.display = "none";
+  document.getElementById("home").style.display = "block";
+  document.getElementById("bemVindo").textContent =
+    `Bem-vindo, ${usuarioLogado.username}`;
 }
 
-function logout() {
-  usuarioLogado = null;
-  mostrarTela("login-screen");
-}
+/* ================= SIMULADO ================= */
 
-/* ===============================
-   SIMULADO
-================================ */
-async function startSimulado() {
-  try {
-    const res = await fetch("/questoes");
-    if (!res.ok) throw new Error("Falha ao carregar");
+async function iniciarSimulado() {
+  const res = await fetch("/questoes");
+  questoes = await res.json();
 
-    questoes = await res.json();
-
-    if (!Array.isArray(questoes) || questoes.length === 0) {
-      throw new Error("Questões inválidas");
-    }
-
-    // embaralhar
-    questoes = questoes.sort(() => Math.random() - 0.5);
-
-    respostas = new Array(questoes.length).fill(null);
-    questaoAtual = 0;
-
-    mostrarTela("simulado-screen");
-    renderQuestao();
-
-  } catch (e) {
+  if (!questoes || questoes.length === 0) {
     alert("Erro ao carregar questões.");
-    console.error(e);
+    return;
   }
+
+  respostas = new Array(questoes.length).fill(null);
+  questaoAtual = 0;
+
+  document.getElementById("home").style.display = "none";
+  document.getElementById("simulado").style.display = "block";
+
+  renderQuestao();
 }
 
-/* ===============================
-   RENDER QUESTÃO
-================================ */
 function renderQuestao() {
   const q = questoes[questaoAtual];
-  if (!q) return;
 
-  document.getElementById("q-number").textContent =
-    `Questão ${questaoAtual + 1}/${questoes.length}`;
+  document.getElementById("contador").textContent =
+    `Questão ${questaoAtual + 1} / ${questoes.length}`;
 
-  document.getElementById("q-text").textContent = q.pergunta;
+  document.getElementById("textoQuestao").textContent = q.pergunta;
 
-  const box = document.getElementById("q-options");
-  box.innerHTML = "";
+  const container = document.getElementById("alternativas");
+  container.innerHTML = "";
 
   q.alternativas.forEach((alt, i) => {
     const btn = document.createElement("button");
+    btn.className = "alternativa";
     btn.textContent = `${String.fromCharCode(65 + i)}) ${alt}`;
-    btn.className = "option-btn";
-
-    if (respostas[questaoAtual] === i) {
-      btn.classList.add("selected");
-    }
-
     btn.onclick = () => {
       respostas[questaoAtual] = i;
       renderQuestao();
     };
 
-    box.appendChild(btn);
-  });
+    if (respostas[questaoAtual] === i) {
+      btn.classList.add("selecionada");
+    }
 
-  document.getElementById("btn-finish").style.display =
-    questaoAtual === questoes.length - 1 ? "inline-block" : "none";
+    container.appendChild(btn);
+  });
 }
 
-/* ===============================
-   NAVEGAÇÃO
-================================ */
-function prevQuestion() {
+function anterior() {
   if (questaoAtual > 0) {
     questaoAtual--;
     renderQuestao();
   }
 }
 
-function nextQuestion() {
+function proxima() {
   if (questaoAtual < questoes.length - 1) {
     questaoAtual++;
     renderQuestao();
   }
 }
 
-function finishSimulado() {
+function finalizar() {
   let acertos = 0;
 
   questoes.forEach((q, i) => {
     if (respostas[i] === q.correta) acertos++;
   });
 
-  document.getElementById("score-val").textContent = acertos;
-  document.getElementById("total-val").textContent = questoes.length;
+  document.getElementById("simulado").style.display = "none";
+  document.getElementById("resultado").style.display = "block";
 
-  mostrarTela("result-screen");
+  document.getElementById("pontuacao").textContent =
+    `${acertos} / ${questoes.length}`;
 }
-
-function quitSimulado() {
-  mostrarTela("dashboard-screen");
-}
-
-function showDashboard() {
-  mostrarTela("dashboard-screen");
-}
-
-/* ===============================
-   INICIAL
-================================ */
-window.onload = () => {
-  mostrarTela("login-screen");
-};
