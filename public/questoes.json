@@ -13,8 +13,7 @@
     ],
     "correta": 2,
     "links": [
-      "https://www.youtube.com/results?search_query=competência+assembleia+legislativa",
-      "https://www.aleri.rj.gov.br"
+      "https://www.youtube.com/results?search_query=competência+assembleia+legislativa"
     ]
   },
   {
@@ -31,8 +30,7 @@
     ],
     "correta": 1,
     "links": [
-      "https://www.youtube.com/results?search_query=princípios+fundamentais+constituição",
-      "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+      "https://www.youtube.com/results?search_query=princípios+fundamentais+constituição"
     ]
   },
   {
@@ -49,29 +47,11 @@
     ],
     "correta": 2,
     "links": [
-      "https://www.youtube.com/results?search_query=princípios+da+administração+pública",
-      "https://www.planalto.gov.br/ccivil_03/leis/l8429.htm"
+      "https://www.youtube.com/results?search_query=princípios+da+administração+pública"
     ]
   },
   {
     "id": 4,
-    "materia": "Direito Administrativo",
-    "conteudo": "Atos Administrativos",
-    "pergunta": "São atributos dos atos administrativos, EXCETO:",
-    "alternativas": [
-      "Presunção de legitimidade",
-      "Imperatividade",
-      "Autoexecutoriedade",
-      "Tipicidade",
-      "Revogabilidade obrigatória"
-    ],
-    "correta": 4,
-    "links": [
-      "https://www.youtube.com/results?search_query=atos+administrativos+atributos"
-    ]
-  },
-  {
-    "id": 5,
     "materia": "Língua Portuguesa",
     "conteudo": "Interpretação de Texto",
     "pergunta": "A principal finalidade de um texto informativo é:",
@@ -88,48 +68,14 @@
     ]
   },
   {
-    "id": 6,
-    "materia": "Língua Portuguesa",
-    "conteudo": "Ortografia",
-    "pergunta": "Assinale a alternativa grafada corretamente:",
-    "alternativas": [
-      "Excessão",
-      "Previlegiado",
-      "Concessão",
-      "Reinvindicar",
-      "Paralizar"
-    ],
-    "correta": 2,
-    "links": [
-      "https://www.youtube.com/results?search_query=ortografia+português+concurso"
-    ]
-  },
-  {
-    "id": 7,
+    "id": 5,
     "materia": "Raciocínio Lógico",
-    "conteudo": "Lógica Proposicional",
-    "pergunta": "A negação da proposição “João é servidor e Maria é deputada” é:",
-    "alternativas": [
-      "João não é servidor e Maria não é deputada",
-      "João não é servidor ou Maria não é deputada",
-      "João é servidor ou Maria é deputada",
-      "João não é servidor e Maria é deputada",
-      "João é servidor e Maria não é deputada"
-    ],
-    "correta": 1,
-    "links": [
-      "https://www.youtube.com/results?search_query=lógica+proposicional+negação"
-    ]
-  },
-  {
-    "id": 8,
-    "materia": "Raciocínio Lógico",
-    "conteudo": "Sequências Numéricas",
+    "conteudo": "Sequência Numérica",
     "pergunta": "Qual é o próximo número da sequência: 2, 4, 8, 16, ?",
     "alternativas": [
       "18",
+      "20",
       "24",
-      "30",
       "32",
       "36"
     ],
@@ -138,9 +84,8 @@
       "https://www.youtube.com/results?search_query=sequência+numérica+concurso"
     ]
   },
-
   {
-    "id": 9,
+    "id": 6,
     "materia": "Informática",
     "conteudo": "Internet",
     "pergunta": "O protocolo utilizado para navegação segura na internet é:",
@@ -153,39 +98,7 @@
     ],
     "correta": 3,
     "links": [
-      "https://www.youtube.com/results?search_query=https+protocolo+segurança"
-    ]
-  },
-  {
-    "id": 10,
-    "materia": "Informática",
-    "conteudo": "Segurança da Informação",
-    "pergunta": "Um software malicioso projetado para se espalhar automaticamente é chamado de:",
-    "alternativas": [
-      "Spyware",
-      "Worm",
-      "Adware",
-      "Firewall",
-      "Antivírus"
-    ],
-    "correta": 1,
-    "links": [
-      "https://www.youtube.com/results?search_query=worm+malware"
+      "https://www.youtube.com/results?search_query=https+protocolo"
     ]
   }
-
-  /* 
-    ⚠️ IMPORTANTE:
-    Este arquivo segue o padrão até a questão 80.
-    As questões 11 a 80 seguem o MESMO MODELO,
-    distribuídas entre:
-    - Constitucional
-    - Administrativo
-    - Português
-    - Raciocínio Lógico
-    - Informática
-
-    Na próxima etapa eu envio:
-    👉 questões 11–80 completas
-  */
 ]
