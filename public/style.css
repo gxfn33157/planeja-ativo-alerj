@@ -1,13 +1,12 @@
 body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background: linear-gradient(135deg, #020617, #0f172a);
-  color: #e5e7eb;
+  font-family: "Inter", Arial, sans-serif;
+  background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  min-height: 100vh;
 }
 
 .screen {
   display: none;
-  min-height: 100vh;
 }
 
 .screen.active {
@@ -17,47 +16,57 @@ body {
 }
 
 .center-box, .simulado-box, .resultado-box {
-  background: rgba(15,23,42,0.95);
-  padding: 40px;
+  background: rgba(20, 30, 48, 0.95);
+  padding: 30px;
   border-radius: 16px;
   width: 100%;
-  max-width: 600px;
-  box-shadow: 0 0 40px rgba(56,189,248,0.2);
+  max-width: 520px;
+  box-shadow: 0 0 40px rgba(0,0,0,.6);
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
+h1, h2, h3 {
+  text-align: center;
 }
 
 button {
-  padding: 12px 20px;
-  border-radius: 10px;
-  border: none;
   cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
 }
 
-.primary {
-  background: linear-gradient(90deg,#38bdf8,#0ea5e9);
-  font-weight: bold;
+button.primary {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: #fff;
 }
 
-.secondary {
-  background: #334155;
-  color: white;
+button.secondary {
+  background: #444;
+  color: #fff;
 }
 
-#alternativas button {
-  display: block;
+#alternativas {
+  margin-top: 20px;
+}
+
+.alternativa {
   width: 100%;
-  margin: 8px 0;
+  text-align: left;
   background: #1e293b;
-  color: white;
+  color: #fff;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
 }
 
-#alternativas button.selected {
-  background: #0ea5e9;
+.alternativa:hover {
+  background: #334155;
+}
+
+.alternativa.selecionada {
+  background: linear-gradient(135deg, #22c1c3, #3a7bd5);
+  box-shadow: 0 0 15px rgba(34,193,195,.6);
 }
