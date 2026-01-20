@@ -1,228 +1,106 @@
-/***********************
- * ESTADO GLOBAL
- ***********************/
 let questoes = [];
-let questoesEmUso = [];
-let indiceAtual = 0;
-let respostas = {};
-let usuarioLogado = null;
-let estatisticas = {};
+let indice = 0;
+let respostas = [];
+let usuario = null;
 
-/***********************
- * ELEMENTOS
- ***********************/
-const telas = {
-  login: document.getElementById("login-screen"),
-  dashboard: document.getElementById("dashboard-screen"),
-  simulado: document.getElementById("simulado-screen"),
-  resultado: document.getElementById("result-screen")
+const telas = ["login-screen","dashboard-screen","simulado-screen","resultado-screen"];
+
+function mostrarTela(id) {
+  telas.forEach(t => document.getElementById(t).classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+window.onload = () => {
+  const salvo = localStorage.getItem("usuarioLogado");
+  if (salvo) {
+    usuario = salvo;
+    document.getElementById("user-display").innerText = usuario;
+    mostrarTela("dashboard-screen");
+  }
 };
 
-const qText = document.getElementById("q-text");
-const qOptions = document.getElementById("q-options");
-const qNumber = document.getElementById("q-number");
-
-/***********************
- * UTIL
- ***********************/
-function mostrarTela(nome) {
-  Object.values(telas).forEach(t => t.classList.remove("active"));
-  telas[nome].classList.add("active");
-}
-
-function shuffle(array) {
-  return array
-    .map(v => ({ v, r: Math.random() }))
-    .sort((a, b) => a.r - b.r)
-    .map(o => o.v);
-}
-
-/***********************
- * LOGIN
- ***********************/
 function login() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  const msg = document.getElementById("login-msg");
-
-  const usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
-
-  if (!usuarios[user] || usuarios[user].senha !== pass) {
-    msg.innerText = "Usuário ou senha inválidos.";
+  const u = username.value.trim();
+  const p = password.value.trim();
+  if (!u || !p) {
+    login-msg.innerText = "Preencha os campos.";
     return;
   }
-
-  usuarioLogado = user;
-  localStorage.setItem("usuarioLogado", user);
-  document.getElementById("user-display").innerText = user;
-
-  mostrarTela("dashboard");
+  usuario = u;
+  localStorage.setItem("usuarioLogado", u);
+  document.getElementById("user-display").innerText = u;
+  mostrarTela("dashboard-screen");
 }
 
-function register() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  const msg = document.getElementById("login-msg");
-
-  if (!user || !pass) {
-    msg.innerText = "Preencha todos os campos.";
-    return;
-  }
-
-  const usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
-
-  if (usuarios[user]) {
-    msg.innerText = "Usuário já existe.";
-    return;
-  }
-
-  usuarios[user] = { senha: pass, historico: [] };
-  localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-  msg.innerText = "Conta criada. Faça login.";
-}
-
-/***********************
- * SIMULADO
- ***********************/
-async function startSimulado() {
-  if (!usuarioLogado) return;
-
-  const res = await fetch("/questoes.json");
-  questoes = await res.json();
-
-  // 🔀 SHUFFLE INTELIGENTE
-  questoesEmUso = shuffle(questoes).slice(0, 80);
-
-  respostas = {};
-  indiceAtual = 0;
-  mostrarTela("simulado");
-  renderizarQuestao();
-}
-
-function renderizarQuestao() {
-  const q = questoesEmUso[indiceAtual];
-  if (!q) return;
-
-  qNumber.innerText = `Questão ${indiceAtual + 1}/80`;
-  qText.innerText = q.pergunta;
-  qOptions.innerHTML = "";
-
-  q.alternativas.forEach((alt, i) => {
-    const letra = String.fromCharCode(65 + i);
-    const btn = document.createElement("button");
-    btn.className = "option";
-    btn.innerText = `${letra}) ${alt}`;
-
-    if (respostas[indiceAtual] === letra) {
-      btn.classList.add("selected");
-    }
-
-    btn.onclick = () => {
-      respostas[indiceAtual] = letra;
-      renderizarQuestao();
-    };
-
-    qOptions.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  if (indiceAtual < 79) indiceAtual++;
-  renderizarQuestao();
-}
-
-function prevQuestion() {
-  if (indiceAtual > 0) indiceAtual--;
-  renderizarQuestao();
-}
-
-function irParaPendente() {
-  const p = questoesEmUso.findIndex((_, i) => !respostas[i]);
-  if (p !== -1) {
-    indiceAtual = p;
-    renderizarQuestao();
-  } else {
-    alert("Nenhuma pendente 🎉");
-  }
-}
-
-/***********************
- * FINALIZAR
- ***********************/
-function finishSimulado() {
-  estatisticas = {};
-  let acertos = 0;
-
-  questoesEmUso.forEach((q, i) => {
-    estatisticas[q.materia] ??= { total: 0, acertos: 0 };
-    estatisticas[q.materia].total++;
-
-    if (respostas[i] === q.correta) {
-      acertos++;
-      estatisticas[q.materia].acertos++;
-    }
-  });
-
-  salvarResultado(acertos);
-  mostrarResultado(acertos);
-}
-
-function salvarResultado(pontuacao) {
-  const usuarios = JSON.parse(localStorage.getItem("usuarios"));
-  usuarios[usuarioLogado].historico.push({
-    data: new Date().toLocaleString(),
-    nota: pontuacao
-  });
-  localStorage.setItem("usuarios", JSON.stringify(usuarios));
-}
-
-function mostrarResultado(acertos) {
-  mostrarTela("resultado");
-
-  document.getElementById("score-val").innerText = acertos;
-  document.getElementById("total-val").innerText = 80;
-
-  const lista = document.getElementById("subject-list");
-  lista.innerHTML = "";
-
-  Object.entries(estatisticas).forEach(([mat, v]) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <strong>${mat}</strong>:
-      ${v.acertos}/${v.total}
-      —
-      <a target="_blank"
-         href="https://www.youtube.com/results?search_query=${encodeURIComponent(mat)}">
-         Revisar
-      </a>
-    `;
-    lista.appendChild(li);
-  });
-}
-
-/***********************
- * DASHBOARD
- ***********************/
 function logout() {
   localStorage.removeItem("usuarioLogado");
   location.reload();
 }
 
-function showDashboard() {
-  mostrarTela("dashboard");
+async function iniciarSimulado() {
+  const res = await fetch("/questoes.json");
+  questoes = await res.json();
+  questoes = questoes.sort(() => Math.random() - 0.5).slice(0, 80);
+  respostas = new Array(questoes.length).fill(null);
+  indice = 0;
+  renderizar();
+  mostrarTela("simulado-screen");
 }
 
-/***********************
- * INIT
- ***********************/
-window.onload = () => {
-  const user = localStorage.getItem("usuarioLogado");
-  if (user) {
-    usuarioLogado = user;
-    document.getElementById("user-display").innerText = user;
-    mostrarTela("dashboard");
-  } else {
-    mostrarTela("login");
-  }
-};
+function renderizar() {
+  const q = questoes[indice];
+  contador.innerText = `Questão ${indice+1} / ${questoes.length}`;
+  pergunta.innerText = q.pergunta;
+  alternativas.innerHTML = "";
+
+  q.alternativas.forEach((alt,i)=>{
+    const b = document.createElement("button");
+    b.innerText = `${String.fromCharCode(65+i)}) ${alt}`;
+    if (respostas[indice] === i) b.classList.add("selected");
+    b.onclick = () => { respostas[indice] = i; renderizar(); };
+    alternativas.appendChild(b);
+  });
+}
+
+function proxima() {
+  if (indice < questoes.length-1) { indice++; renderizar(); }
+}
+
+function anterior() {
+  if (indice > 0) { indice--; renderizar(); }
+}
+
+function finalizar() {
+  let acertos = 0;
+  const materias = {};
+
+  questoes.forEach((q,i)=>{
+    if (!materias[q.materia]) materias[q.materia]={total:0,acertos:0,conteudos:new Set(),links:new Set()};
+    materias[q.materia].total++;
+    q.conteudos.forEach(c=>materias[q.materia].conteudos.add(c));
+    q.links.forEach(l=>materias[q.materia].links.add(l));
+    if (respostas[i] === q.resposta) {
+      acertos++;
+      materias[q.materia].acertos++;
+    }
+  });
+
+  pontuacao.innerText = `Você acertou ${acertos} de ${questoes.length}`;
+  resultado-detalhado.innerHTML = "";
+
+  Object.keys(materias).forEach(m=>{
+    const r = materias[m];
+    resultado-detalhado.innerHTML += `
+      <h3>${m}</h3>
+      <p>${r.acertos}/${r.total}</p>
+      <ul>${[...r.conteudos].map(c=>`<li>${c}</li>`).join("")}</ul>
+      <ul>${[...r.links].map(l=>`<li><a href="${l}" target="_blank">${l}</a></li>`).join("")}</ul>
+    `;
+  });
+
+  mostrarTela("resultado-screen");
+}
+
+function voltarDashboard() {
+  mostrarTela("dashboard-screen");
+}
