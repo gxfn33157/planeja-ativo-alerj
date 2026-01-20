@@ -187,3 +187,17 @@ window.onload = () => {
   if (usuario) iniciarDashboard();
   else mostrarTela("login-screen");
 };
+
+/* ========= FUNÇÕES PONTE PARA OS BOTÕES ========= */
+
+function anterior() {
+  voltarQuestao();
+}
+
+function proxima() {
+  proximaQuestao();
+}
+
+function finalizar() {
+  finalizarSimulado();
+}
