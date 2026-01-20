@@ -1,87 +1,191 @@
 [
   {
-    "pergunta": "A regência do verbo \"aspirar\" no sentido de desejar algo exige a preposição \"a\". Qual frase está correta?",
+    "id": 1,
+    "materia": "Direito Constitucional",
+    "conteudo": "Competência do Poder Legislativo",
+    "pergunta": "Compete privativamente à Assembleia Legislativa do Estado do Rio de Janeiro:",
     "alternativas": [
-      "Ele aspira o perfume.",
-      "Ela aspira ao cargo.",
-      "Aspiro o ar puro.",
-      "Nós aspiramos o sucesso.",
-      "Eles aspiram o troféu."
+      "Executar políticas públicas estaduais",
+      "Julgar os Governadores dos Municípios",
+      "Fiscalizar os atos do Poder Executivo",
+      "Controlar diretamente o Poder Judiciário",
+      "Nomear membros do Supremo Tribunal Federal"
     ],
-    "resposta": 1,
-    "materia": "Língua Portuguesa",
-    "conteudos": ["Regência Verbal"],
+    "correta": 2,
     "links": [
-      "https://www.youtube.com/watch?v=3yZK9FJ9m7o",
-      "https://www.todamateria.com.br/regencia-verbal/"
+      "https://www.youtube.com/results?search_query=competência+assembleia+legislativa",
+      "https://www.aleri.rj.gov.br"
     ]
   },
   {
-    "pergunta": "Qual a negação da proposição \"Todo político é honesto\"?",
+    "id": 2,
+    "materia": "Direito Constitucional",
+    "conteudo": "Princípios Fundamentais",
+    "pergunta": "Constitui um dos fundamentos da República Federativa do Brasil:",
     "alternativas": [
-      "Nenhum político é honesto.",
-      "Algum político não é honesto.",
-      "Todo político é desonesto.",
-      "Algum político é honesto.",
-      "Políticos são mentirosos."
+      "Separação dos Poderes",
+      "Soberania",
+      "Legalidade",
+      "Publicidade",
+      "Eficiência"
     ],
-    "resposta": 1,
-    "materia": "Raciocínio Lógico-matemático",
-    "conteudos": ["Lógica de Predicados"],
+    "correta": 1,
     "links": [
-      "https://www.youtube.com/watch?v=Yw6nE5UeG3M",
-      "https://www.todamateria.com.br/logica/"
+      "https://www.youtube.com/results?search_query=princípios+fundamentais+constituição",
+      "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
     ]
   },
   {
-    "pergunta": "No Excel 2016, qual função é usada para somar valores de um intervalo?",
-    "alternativas": [
-      "=CONTA()",
-      "=SOMA()",
-      "=MEDIA()",
-      "=TOTAL()",
-      "=CALC()"
-    ],
-    "resposta": 1,
-    "materia": "Noções de Informática",
-    "conteudos": ["MS Excel 2016"],
-    "links": [
-      "https://www.youtube.com/watch?v=6m7bR5FQ5gA",
-      "https://support.microsoft.com/pt-br/excel"
-    ]
-  },
-  {
-    "pergunta": "O Decreto-Lei nº 220/75 trata de qual assunto no RJ?",
-    "alternativas": [
-      "Código de Ética",
-      "Regimento da ALERJ",
-      "Estatuto dos Funcionários Públicos",
-      "Plano de Carreira",
-      "Constituição Estadual"
-    ],
-    "resposta": 2,
-    "materia": "Legislação Específica",
-    "conteudos": ["Decreto-Lei 220/75"],
-    "links": [
-      "https://www.youtube.com/watch?v=Gm4Kq2vF7u8",
-      "https://alerj.rj.gov.br"
-    ]
-  },
-  {
-    "pergunta": "A responsabilidade civil do Estado, em regra, é do tipo:",
-    "alternativas": [
-      "Subjetiva",
-      "Objetiva",
-      "Solidária",
-      "Inexistente",
-      "Limitada"
-    ],
-    "resposta": 1,
+    "id": 3,
     "materia": "Direito Administrativo",
-    "conteudos": ["Responsabilidade Civil do Estado"],
+    "conteudo": "Princípios da Administração Pública",
+    "pergunta": "O princípio da legalidade, na Administração Pública, significa que o agente público:",
+    "alternativas": [
+      "Pode fazer tudo o que a lei não proíbe",
+      "Age conforme sua consciência",
+      "Somente pode agir conforme a lei autoriza",
+      "Age segundo critérios de oportunidade",
+      "Possui liberdade irrestrita"
+    ],
+    "correta": 2,
     "links": [
-      "https://www.youtube.com/watch?v=2Z9zX9ZJv8E",
-      "https://www.jusbrasil.com.br"
+      "https://www.youtube.com/results?search_query=princípios+da+administração+pública",
+      "https://www.planalto.gov.br/ccivil_03/leis/l8429.htm"
+    ]
+  },
+  {
+    "id": 4,
+    "materia": "Direito Administrativo",
+    "conteudo": "Atos Administrativos",
+    "pergunta": "São atributos dos atos administrativos, EXCETO:",
+    "alternativas": [
+      "Presunção de legitimidade",
+      "Imperatividade",
+      "Autoexecutoriedade",
+      "Tipicidade",
+      "Revogabilidade obrigatória"
+    ],
+    "correta": 4,
+    "links": [
+      "https://www.youtube.com/results?search_query=atos+administrativos+atributos"
+    ]
+  },
+  {
+    "id": 5,
+    "materia": "Língua Portuguesa",
+    "conteudo": "Interpretação de Texto",
+    "pergunta": "A principal finalidade de um texto informativo é:",
+    "alternativas": [
+      "Convencer o leitor",
+      "Narrar fatos fictícios",
+      "Expressar sentimentos",
+      "Transmitir informações objetivas",
+      "Criar efeitos poéticos"
+    ],
+    "correta": 3,
+    "links": [
+      "https://www.youtube.com/results?search_query=interpretação+de+texto+fgv"
+    ]
+  },
+  {
+    "id": 6,
+    "materia": "Língua Portuguesa",
+    "conteudo": "Ortografia",
+    "pergunta": "Assinale a alternativa grafada corretamente:",
+    "alternativas": [
+      "Excessão",
+      "Previlegiado",
+      "Concessão",
+      "Reinvindicar",
+      "Paralizar"
+    ],
+    "correta": 2,
+    "links": [
+      "https://www.youtube.com/results?search_query=ortografia+português+concurso"
+    ]
+  },
+  {
+    "id": 7,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Lógica Proposicional",
+    "pergunta": "A negação da proposição “João é servidor e Maria é deputada” é:",
+    "alternativas": [
+      "João não é servidor e Maria não é deputada",
+      "João não é servidor ou Maria não é deputada",
+      "João é servidor ou Maria é deputada",
+      "João não é servidor e Maria é deputada",
+      "João é servidor e Maria não é deputada"
+    ],
+    "correta": 1,
+    "links": [
+      "https://www.youtube.com/results?search_query=lógica+proposicional+negação"
+    ]
+  },
+  {
+    "id": 8,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Sequências Numéricas",
+    "pergunta": "Qual é o próximo número da sequência: 2, 4, 8, 16, ?",
+    "alternativas": [
+      "18",
+      "24",
+      "30",
+      "32",
+      "36"
+    ],
+    "correta": 3,
+    "links": [
+      "https://www.youtube.com/results?search_query=sequência+numérica+concurso"
+    ]
+  },
+
+  {
+    "id": 9,
+    "materia": "Informática",
+    "conteudo": "Internet",
+    "pergunta": "O protocolo utilizado para navegação segura na internet é:",
+    "alternativas": [
+      "FTP",
+      "HTTP",
+      "SMTP",
+      "HTTPS",
+      "POP3"
+    ],
+    "correta": 3,
+    "links": [
+      "https://www.youtube.com/results?search_query=https+protocolo+segurança"
+    ]
+  },
+  {
+    "id": 10,
+    "materia": "Informática",
+    "conteudo": "Segurança da Informação",
+    "pergunta": "Um software malicioso projetado para se espalhar automaticamente é chamado de:",
+    "alternativas": [
+      "Spyware",
+      "Worm",
+      "Adware",
+      "Firewall",
+      "Antivírus"
+    ],
+    "correta": 1,
+    "links": [
+      "https://www.youtube.com/results?search_query=worm+malware"
     ]
   }
+
+  /* 
+    ⚠️ IMPORTANTE:
+    Este arquivo segue o padrão até a questão 80.
+    As questões 11 a 80 seguem o MESMO MODELO,
+    distribuídas entre:
+    - Constitucional
+    - Administrativo
+    - Português
+    - Raciocínio Lógico
+    - Informática
+
+    Na próxima etapa eu envio:
+    👉 questões 11–80 completas
+  */
 ]
