@@ -7,15 +7,14 @@
 </head>
 <body>
 
-<div id="login">
-  <h1>Simulado ALERJ 2026</h1>
-  <button onclick="iniciar()">Iniciar Simulado</button>
-</div>
+<h1 class="titulo">Simulado ALERJ 2026</h1>
+
+<button id="btnIniciar" onclick="iniciar()">Iniciar Simulado</button>
 
 <div id="simulado" class="hidden">
   <div class="topo">
     <span id="contador"></span>
-    <button onclick="sair()">Sair</button>
+    <button onclick="finalizar()">Finalizar</button>
   </div>
 
   <h2 id="pergunta"></h2>
@@ -25,15 +24,22 @@
     <button onclick="anterior()">Anterior</button>
     <button onclick="proxima()">Próxima</button>
   </div>
-
-  <button class="finalizar" onclick="finalizar()">Finalizar Simulado</button>
 </div>
 
 <div id="resultado" class="hidden">
-  <h1>Resultado</h1>
-  <h2 id="nota"></h2>
+  <h2>Resultado</h2>
+  <p id="nota"></p>
+
+  <h3>Conteúdos para revisar</h3>
   <div id="analise"></div>
-  <button onclick="reiniciar()">Voltar ao Início</button>
+
+  <h3>Histórico</h3>
+  <ul id="historico"></ul>
+
+  <h3>Ranking</h3>
+  <ol id="ranking"></ol>
+
+  <button onclick="reiniciar()">Novo Simulado</button>
 </div>
 
 <script src="script.js"></script>
