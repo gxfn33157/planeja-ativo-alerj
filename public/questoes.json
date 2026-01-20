@@ -1,104 +1,844 @@
 [
   {
     "id": 1,
-    "materia": "Direito Constitucional",
-    "conteudo": "Competência do Poder Legislativo",
-    "pergunta": "Compete privativamente à Assembleia Legislativa do Estado do Rio de Janeiro:",
+    "materia": "Português",
+    "conteudo": "Interpretação de texto",
+    "pergunta": "A principal finalidade de um texto argumentativo é:",
     "alternativas": [
-      "Executar políticas públicas estaduais",
-      "Julgar os Governadores dos Municípios",
-      "Fiscalizar os atos do Poder Executivo",
-      "Controlar diretamente o Poder Judiciário",
-      "Nomear membros do Supremo Tribunal Federal"
+      "A) Narrar fatos fictícios",
+      "B) Expor dados sem opinião",
+      "C) Defender um ponto de vista",
+      "D) Descrever ambientes",
+      "E) Relatar acontecimentos históricos"
     ],
-    "correta": 2,
-    "links": [
-      "https://www.youtube.com/results?search_query=competência+assembleia+legislativa"
-    ]
+    "correta": 2
   },
   {
     "id": 2,
-    "materia": "Direito Constitucional",
-    "conteudo": "Princípios Fundamentais",
-    "pergunta": "Constitui um dos fundamentos da República Federativa do Brasil:",
+    "materia": "Português",
+    "conteudo": "Coesão e coerência",
+    "pergunta": "A coesão textual está relacionada:",
     "alternativas": [
-      "Separação dos Poderes",
-      "Soberania",
-      "Legalidade",
-      "Publicidade",
-      "Eficiência"
+      "A) À organização sintática",
+      "B) À ligação entre as partes do texto",
+      "C) Ao sentido global do texto",
+      "D) À intenção do autor",
+      "E) Ao gênero textual"
     ],
-    "correta": 1,
-    "links": [
-      "https://www.youtube.com/results?search_query=princípios+fundamentais+constituição"
-    ]
+    "correta": 1
   },
   {
     "id": 3,
-    "materia": "Direito Administrativo",
-    "conteudo": "Princípios da Administração Pública",
-    "pergunta": "O princípio da legalidade, na Administração Pública, significa que o agente público:",
+    "materia": "Português",
+    "conteudo": "Pontuação",
+    "pergunta": "O uso da vírgula é correto em:",
     "alternativas": [
-      "Pode fazer tudo o que a lei não proíbe",
-      "Age conforme sua consciência",
-      "Somente pode agir conforme a lei autoriza",
-      "Age segundo critérios de oportunidade",
-      "Possui liberdade irrestrita"
+      "A) João foi ao mercado, e comprou pão",
+      "B) Maria, estudou para a prova",
+      "C) Os alunos que estudaram, passaram",
+      "D) Quando chegou, todos aplaudiram",
+      "E) Pedro gosta, de futebol"
     ],
-    "correta": 2,
-    "links": [
-      "https://www.youtube.com/results?search_query=princípios+da+administração+pública"
-    ]
+    "correta": 3
   },
   {
     "id": 4,
-    "materia": "Língua Portuguesa",
-    "conteudo": "Interpretação de Texto",
-    "pergunta": "A principal finalidade de um texto informativo é:",
+    "materia": "Português",
+    "conteudo": "Classes gramaticais",
+    "pergunta": "A palavra 'rapidamente' é classificada como:",
     "alternativas": [
-      "Convencer o leitor",
-      "Narrar fatos fictícios",
-      "Expressar sentimentos",
-      "Transmitir informações objetivas",
-      "Criar efeitos poéticos"
+      "A) Substantivo",
+      "B) Adjetivo",
+      "C) Advérbio",
+      "D) Verbo",
+      "E) Preposição"
     ],
-    "correta": 3,
-    "links": [
-      "https://www.youtube.com/results?search_query=interpretação+de+texto+fgv"
-    ]
+    "correta": 2
   },
   {
     "id": 5,
-    "materia": "Raciocínio Lógico",
-    "conteudo": "Sequência Numérica",
-    "pergunta": "Qual é o próximo número da sequência: 2, 4, 8, 16, ?",
+    "materia": "Português",
+    "conteudo": "Concordância verbal",
+    "pergunta": "Assinale a frase correta:",
     "alternativas": [
-      "18",
-      "20",
-      "24",
-      "32",
-      "36"
+      "A) Houveram muitos problemas",
+      "B) Fazem dois anos que viajei",
+      "C) Existem várias soluções",
+      "D) Deve haverem alternativas",
+      "E) Ocorreram-se erros"
     ],
-    "correta": 3,
-    "links": [
-      "https://www.youtube.com/results?search_query=sequência+numérica+concurso"
-    ]
+    "correta": 2
   },
   {
     "id": 6,
+    "materia": "Matemática",
+    "conteudo": "Porcentagem",
+    "pergunta": "20% de 250 é:",
+    "alternativas": [
+      "A) 25",
+      "B) 40",
+      "C) 50",
+      "D) 60",
+      "E) 75"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 7,
+    "materia": "Matemática",
+    "conteudo": "Razão e proporção",
+    "pergunta": "Se 3 lápis custam R$ 6, quanto custam 5 lápis?",
+    "alternativas": [
+      "A) R$ 8",
+      "B) R$ 9",
+      "C) R$ 10",
+      "D) R$ 11",
+      "E) R$ 12"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 8,
+    "materia": "Matemática",
+    "conteudo": "Regra de três",
+    "pergunta": "Uma máquina produz 100 peças em 5 horas. Em 10 horas produzirá:",
+    "alternativas": [
+      "A) 150",
+      "B) 180",
+      "C) 200",
+      "D) 220",
+      "E) 250"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 9,
+    "materia": "Matemática",
+    "conteudo": "Frações",
+    "pergunta": "O valor de 3/4 de 80 é:",
+    "alternativas": [
+      "A) 50",
+      "B) 55",
+      "C) 60",
+      "D) 65",
+      "E) 70"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 10,
+    "materia": "Matemática",
+    "conteudo": "Média aritmética",
+    "pergunta": "A média dos números 4, 6 e 8 é:",
+    "alternativas": [
+      "A) 5",
+      "B) 6",
+      "C) 7",
+      "D) 8",
+      "E) 9"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 11,
+    "materia": "Informática",
+    "conteudo": "Sistema operacional",
+    "pergunta": "O Windows é classificado como:",
+    "alternativas": [
+      "A) Editor de texto",
+      "B) Sistema operacional",
+      "C) Navegador",
+      "D) Antivírus",
+      "E) Linguagem de programação"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 12,
     "materia": "Informática",
     "conteudo": "Internet",
-    "pergunta": "O protocolo utilizado para navegação segura na internet é:",
+    "pergunta": "O protocolo HTTP é utilizado para:",
     "alternativas": [
-      "FTP",
-      "HTTP",
-      "SMTP",
-      "HTTPS",
-      "POP3"
+      "A) Transferência de e-mails",
+      "B) Compartilhamento de arquivos",
+      "C) Navegação na web",
+      "D) Acesso remoto",
+      "E) Segurança de rede"
     ],
-    "correta": 3,
-    "links": [
-      "https://www.youtube.com/results?search_query=https+protocolo"
-    ]
-  }
+    "correta": 2
+  },
+  {
+    "id": 13,
+    "materia": "Informática",
+    "conteudo": "Segurança da informação",
+    "pergunta": "Phishing é uma técnica usada para:",
+    "alternativas": [
+      "A) Proteger dados",
+      "B) Atualizar sistemas",
+      "C) Roubar informações",
+      "D) Compactar arquivos",
+      "E) Melhorar desempenho"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 14,
+    "materia": "Informática",
+    "conteudo": "Pacote Office",
+    "pergunta": "O Excel é utilizado principalmente para:",
+    "alternativas": [
+      "A) Edição de textos",
+      "B) Criação de apresentações",
+      "C) Planilhas eletrônicas",
+      "D) Navegação web",
+      "E) Banco de dados"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 15,
+    "materia": "Informática",
+    "conteudo": "Atalhos",
+    "pergunta": "O atalho Ctrl + C serve para:",
+    "alternativas": [
+      "A) Colar",
+      "B) Recortar",
+      "C) Copiar",
+      "D) Desfazer",
+      "E) Salvar"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 16,
+    "materia": "Direito Constitucional",
+    "conteudo": "Princípios fundamentais",
+    "pergunta": "A República Federativa do Brasil é formada pela união:",
+    "alternativas": [
+      "A) Estados e Municípios",
+      "B) União e Estados",
+      "C) União, Estados, DF e Municípios",
+      "D) União e DF",
+      "E) Estados e DF"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 17,
+    "materia": "Direito Constitucional",
+    "conteudo": "Direitos fundamentais",
+    "pergunta": "É direito fundamental previsto na Constituição:",
+    "alternativas": [
+      "A) Direito ao lucro",
+      "B) Direito à propriedade",
+      "C) Direito à herança política",
+      "D) Direito ao monopólio",
+      "E) Direito à censura"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 18,
+    "materia": "Direito Constitucional",
+    "conteudo": "Poder Legislativo",
+    "pergunta": "O Poder Legislativo federal é exercido pelo:",
+    "alternativas": [
+      "A) STF",
+      "B) Presidente",
+      "C) Congresso Nacional",
+      "D) Senado",
+      "E) Câmara"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 19,
+    "materia": "Direito Constitucional",
+    "conteudo": "Administração pública",
+    "pergunta": "O princípio da legalidade significa que:",
+    "alternativas": [
+      "A) Tudo é permitido",
+      "B) A lei é opcional",
+      "C) O agente público só faz o que a lei permite",
+      "D) A moral se sobrepõe à lei",
+      "E) A eficiência é prioritária"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 20,
+    "materia": "Direito Constitucional",
+    "conteudo": "Constituição",
+    "pergunta": "A Constituição Federal de 1988 é classificada como:",
+    "alternativas": [
+      "A) Sintética",
+      "B) Flexível",
+      "C) Outorgada",
+      "D) Promulgada",
+      "E) Costumeira"
+    ],
+    "correta": 3
+  },
+  {
+    "id": 21,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Lógica proposicional",
+    "pergunta": "A negação da proposição 'p e q' é:",
+    "alternativas": [
+      "A) não p e não q",
+      "B) p ou q",
+      "C) não p ou não q",
+      "D) p implica q",
+      "E) p se e somente se q"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 22,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Sequências",
+    "pergunta": "Complete a sequência: 2, 4, 8, 16, ?",
+    "alternativas": [
+      "A) 18",
+      "B) 20",
+      "C) 24",
+      "D) 32",
+      "E) 64"
+    ],
+    "correta": 3
+  },
+  {
+    "id": 23,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Conjuntos",
+    "pergunta": "A interseção representa:",
+    "alternativas": [
+      "A) União",
+      "B) Diferença",
+      "C) Elementos comuns",
+      "D) Complemento",
+      "E) Exclusão"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 24,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Diagramas",
+    "pergunta": "Diagramas são usados para:",
+    "alternativas": [
+      "A) Calcular médias",
+      "B) Representar conjuntos",
+      "C) Resolver equações",
+      "D) Criar gráficos",
+      "E) Medir probabilidades"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 25,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Probabilidade",
+    "pergunta": "A probabilidade varia entre:",
+    "alternativas": [
+      "A) -1 e 1",
+      "B) 0 e 1",
+      "C) 1 e 100",
+      "D) 0 e 100",
+      "E) 1 e infinito"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 26,
+    "materia": "Atualidades",
+    "conteudo": "Administração pública",
+    "pergunta": "A transparência é um princípio relacionado à:",
+    "alternativas": [
+      "A) Moral",
+      "B) Eficiência",
+      "C) Publicidade",
+      "D) Legalidade",
+      "E) Impessoalidade"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 27,
+    "materia": "Atualidades",
+    "conteudo": "Ética",
+    "pergunta": "É considerado comportamento ético:",
+    "alternativas": [
+      "A) Favorecimento pessoal",
+      "B) Omissão intencional",
+      "C) Uso indevido de recursos",
+      "D) Cumprimento das normas",
+      "E) Benefício próprio"
+    ],
+    "correta": 3
+  },
+  {
+    "id": 28,
+    "materia": "Atualidades",
+    "conteudo": "Cidadania",
+    "pergunta": "O exercício da cidadania envolve:",
+    "alternativas": [
+      "A) Apenas direitos",
+      "B) Apenas deveres",
+      "C) Direitos e deveres",
+      "D) Poder econômico",
+      "E) Hierarquia social"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 29,
+    "materia": "Atualidades",
+    "conteudo": "Gestão pública",
+    "pergunta": "A eficiência busca:",
+    "alternativas": [
+      "A) Mais custos",
+      "B) Menos resultados",
+      "C) Melhor uso de recursos",
+      "D) Mais burocracia",
+      "E) Controle excessivo"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 30,
+    "materia": "Atualidades",
+    "conteudo": "Sociedade",
+    "pergunta": "A inclusão social promove:",
+    "alternativas": [
+      "A) Exclusão",
+      "B) Desigualdade",
+      "C) Participação ampla",
+      "D) Segregação",
+      "E) Conflito"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 31,
+    "materia": "Português",
+    "conteudo": "Semântica",
+    "pergunta": "Palavras com sentidos opostos são chamadas de:",
+    "alternativas": [
+      "A) Sinônimos",
+      "B) Antônimos",
+      "C) Homônimos",
+      "D) Parônimos",
+      "E) Hiperônimos"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 32,
+    "materia": "Português",
+    "conteudo": "Figuras de linguagem",
+    "pergunta": "A metáfora é uma figura de:",
+    "alternativas": [
+      "A) Pensamento",
+      "B) Sintaxe",
+      "C) Som",
+      "D) Palavra",
+      "E) Construção"
+    ],
+    "correta": 3
+  },
+  {
+    "id": 33,
+    "materia": "Matemática",
+    "conteudo": "Potenciação",
+    "pergunta": "2³ é igual a:",
+    "alternativas": [
+      "A) 4",
+      "B) 6",
+      "C) 8",
+      "D) 16",
+      "E) 32"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 34,
+    "materia": "Matemática",
+    "conteudo": "Raiz quadrada",
+    "pergunta": "A raiz quadrada de 81 é:",
+    "alternativas": [
+      "A) 7",
+      "B) 8",
+      "C) 9",
+      "D) 10",
+      "E) 12"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 35,
+    "materia": "Informática",
+    "conteudo": "Navegadores",
+    "pergunta": "O Google Chrome é um:",
+    "alternativas": [
+      "A) Sistema operacional",
+      "B) Editor de texto",
+      "C) Navegador de internet",
+      "D) Antivírus",
+      "E) Firewall"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 36,
+    "materia": "Direito Constitucional",
+    "conteudo": "Direitos sociais",
+    "pergunta": "É direito social previsto na CF:",
+    "alternativas": [
+      "A) Lucro",
+      "B) Propriedade intelectual",
+      "C) Educação",
+      "D) Livre concorrência",
+      "E) Censura"
+    ],
+    "correta": 2
+  },
+  {
+    "id": 37,
+    "materia": "Raciocínio Lógico",
+    "conteudo": "Tabelas verdade",
+    "pergunta": "A proposição 'p ou q' é falsa quando:",
+    "alternativas": [
+      "A) p é verdadeiro",
+      "B) q é verdadeiro",
+      "C) ambos são verdadeiros",
+      "D) ambos são falsos",
+      "E) p é falso"
+    ],
+    "correta": 3
+  },
+  {
+    "id": 38,
+    "materia": "Atualidades",
+    "conteudo": "Sustentabilidade",
+    "pergunta": "Desenvolvimento sustentável busca:",
+    "alternativas": [
+      "A) Crescimento sem limites",
+      "B) Uso consciente dos recursos",
+      "C) Exploração máxima",
+      "D) Lucro imediato",
+      "E) Consumo excessivo"
+    ],
+    "correta": 1
+  },
+  {
+    "id": 39,
+    "materia": "Português",
+    "conteudo": "Ortografia",
+    "pergunta": "Assinale a palavra escrita corretamente:",
+    "alternativas": [
+      "A) Exceção",
+      "B) Excessão",
+      "C) Excesão",
+      "D) Excessão",
+      "E) Exessão"
+    ],
+    "correta": 0
+  },
+  {
+    "id": 40,
+    "materia": "Matemática",
+    "conteudo": "Equações",
+    "pergunta": "x + 5 = 12. O valor de x é:",
+    "alternativas": [
+      "A) 5",
+      "B) 6",
+      "C) 7",
+      "D) 8",
+      "E) 9"
+    ],
+    "correta": 2
+  },
+  [
+    {
+      "id": 41,
+      "materia": "Português",
+      "conteudo": "Interpretação de texto",
+      "pergunta": "Em um texto informativo, a principal característica é:",
+      "alternativas": [
+        "A) Defender opinião",
+        "B) Relatar fatos com objetividade",
+        "C) Narrar história fictícia",
+        "D) Convencer o leitor",
+        "E) Criar efeito estético"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 42,
+      "materia": "Português",
+      "conteudo": "Regência verbal",
+      "pergunta": "O verbo 'assistir' no sentido de ver exige:",
+      "alternativas": [
+        "A) Objeto direto",
+        "B) Objeto indireto",
+        "C) Predicativo",
+        "D) Complemento nominal",
+        "E) Aposto"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 43,
+      "materia": "Matemática",
+      "conteudo": "Porcentagem",
+      "pergunta": "10% de 400 corresponde a:",
+      "alternativas": [
+        "A) 20",
+        "B) 30",
+        "C) 40",
+        "D) 50",
+        "E) 60"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 44,
+      "materia": "Matemática",
+      "conteudo": "Regra de três",
+      "pergunta": "Se 4 pessoas fazem um trabalho em 6 dias, 8 pessoas farão em:",
+      "alternativas": [
+        "A) 2 dias",
+        "B) 3 dias",
+        "C) 4 dias",
+        "D) 5 dias",
+        "E) 6 dias"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 45,
+      "materia": "Informática",
+      "conteudo": "Hardware",
+      "pergunta": "O componente responsável pelo processamento é:",
+      "alternativas": [
+        "A) HD",
+        "B) Memória RAM",
+        "C) CPU",
+        "D) Placa-mãe",
+        "E) Fonte"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 46,
+      "materia": "Informática",
+      "conteudo": "Segurança",
+      "pergunta": "Firewall tem como função:",
+      "alternativas": [
+        "A) Editar textos",
+        "B) Controlar acesso à rede",
+        "C) Criar planilhas",
+        "D) Aumentar velocidade",
+        "E) Remover vírus manualmente"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 47,
+      "materia": "Direito Constitucional",
+      "conteudo": "Direitos individuais",
+      "pergunta": "É garantido constitucionalmente:",
+      "alternativas": [
+        "A) Censura prévia",
+        "B) Liberdade de expressão",
+        "C) Prisão sem processo",
+        "D) Tortura legal",
+        "E) Trabalho forçado"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 48,
+      "materia": "Direito Constitucional",
+      "conteudo": "Poder Executivo",
+      "pergunta": "O chefe do Poder Executivo federal é:",
+      "alternativas": [
+        "A) Presidente da República",
+        "B) Governador",
+        "C) Prefeito",
+        "D) STF",
+        "E) Congresso"
+      ],
+      "correta": 0
+    },
+    {
+      "id": 49,
+      "materia": "Raciocínio Lógico",
+      "conteudo": "Sequências",
+      "pergunta": "Complete: 1, 3, 5, 7, ?",
+      "alternativas": [
+        "A) 8",
+        "B) 9",
+        "C) 10",
+        "D) 11",
+        "E) 12"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 50,
+      "materia": "Raciocínio Lógico",
+      "conteudo": "Probabilidade",
+      "pergunta": "A chance de sair cara em uma moeda justa é:",
+      "alternativas": [
+        "A) 0",
+        "B) 25%",
+        "C) 50%",
+        "D) 75%",
+        "E) 100%"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 51,
+      "materia": "Atualidades",
+      "conteudo": "Administração pública",
+      "pergunta": "A moralidade administrativa exige:",
+      "alternativas": [
+        "A) Legalidade apenas",
+        "B) Vantagem pessoal",
+        "C) Conduta ética",
+        "D) Sigilo absoluto",
+        "E) Livre interpretação"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 52,
+      "materia": "Atualidades",
+      "conteudo": "Cidadania",
+      "pergunta": "Participação política é exemplo de:",
+      "alternativas": [
+        "A) Exclusão",
+        "B) Cidadania",
+        "C) Autoritarismo",
+        "D) Desigualdade",
+        "E) Omissão"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 53,
+      "materia": "Português",
+      "conteudo": "Ortografia",
+      "pergunta": "Assinale a forma correta:",
+      "alternativas": [
+        "A) Excessão",
+        "B) Exceção",
+        "C) Excesão",
+        "D) Excessão",
+        "E) Exessão"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 54,
+      "materia": "Matemática",
+      "conteudo": "Média",
+      "pergunta": "A média de 10, 20 e 30 é:",
+      "alternativas": [
+        "A) 15",
+        "B) 18",
+        "C) 20",
+        "D) 22",
+        "E) 25"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 55,
+      "materia": "Informática",
+      "conteudo": "Internet",
+      "pergunta": "URL identifica:",
+      "alternativas": [
+        "A) Usuário",
+        "B) Endereço na internet",
+        "C) Servidor físico",
+        "D) Protocolo local",
+        "E) Firewall"
+      ],
+      "correta": 1
+    },
+    {
+      "id": 56,
+      "materia": "Direito Constitucional",
+      "conteudo": "Administração pública",
+      "pergunta": "Impessoalidade significa:",
+      "alternativas": [
+        "A) Benefício próprio",
+        "B) Promoção pessoal",
+        "C) Tratamento igualitário",
+        "D) Favorecimento",
+        "E) Arbitragem"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 57,
+      "materia": "Raciocínio Lógico",
+      "conteudo": "Proposições",
+      "pergunta": "Uma proposição é:",
+      "alternativas": [
+        "A) Pergunta",
+        "B) Ordem",
+        "C) Frase com valor lógico",
+        "D) Exclamação",
+        "E) Opinião"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 58,
+      "materia": "Atualidades",
+      "conteudo": "Ética",
+      "pergunta": "Atuar com honestidade é:",
+      "alternativas": [
+        "A) Imoral",
+        "B) Antiético",
+        "C) Ético",
+        "D) Facultativo",
+        "E) Irrelevante"
+      ],
+      "correta": 2
+    },
+    {
+      "id": 59,
+      "materia": "Português",
+      "conteudo": "Sintaxe",
+      "pergunta": "O sujeito da frase é:",
+      "alternativas": [
+        "A) Quem pratica a ação",
+        "B) O verbo",
+        "C) O complemento",
+        "D) O objeto indireto",
+        "E) O predicado"
+      ],
+      "correta": 0
+    },
+    {
+      "id": 60,
+      "materia": "Matemática",
+      "conteudo": "Equações",
+      "pergunta": "x - 4 = 6. O valor de x é:",
+      "alternativas": [
+        "A) 8",
+        "B) 9",
+        "C) 10",
+        "D) 11",
+        "E) 12"
+      ],
+      "correta": 2
+    }
+  ]
 ]
