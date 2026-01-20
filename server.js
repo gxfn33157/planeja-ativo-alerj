@@ -20,32 +20,34 @@ CREATE TABLE IF NOT EXISTS users (
 `).run();
 
 /* ---------- ROTAS ---------- */
-app.post("/register", (req, res) => {
+app.post("/login", (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password) {
     return res.status(400).json({ error: "Dados inválidos" });
   }
 
-  try {
-    const hash = bcrypt.hashSync(password, 10);
-    db.prepare(
-      "INSERT INTO users (username, password) VALUES (?, ?)"
-    ).run(username, hash);
-    res.json({ success: true });
-  } catch {
-    res.status(400).json({ error: "Usuário já existe" });
-  }
-});
-
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-
-  const user = db
+  let user = db
     .prepare("SELECT * FROM users WHERE username = ?")
     .get(username);
 
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ error: "Usuário ou senha inválidos" });
+  // 🔹 SE NÃO EXISTIR → CRIA
+  if (!user) {
+    const hash = bcrypt.hashSync(password, 10);
+
+    const result = db
+      .prepare("INSERT INTO users (username, password) VALUES (?, ?)")
+      .run(username, hash);
+
+    user = {
+      id: result.lastInsertRowid,
+      username
+    };
+  } else {
+    // 🔹 SE EXISTIR → VALIDA SENHA
+    if (!bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ error: "Usuário ou senha inválidos" });
+    }
   }
 
   res.json({
@@ -56,6 +58,7 @@ app.post("/login", (req, res) => {
     }
   });
 });
+
 
 /* ---------- QUESTÕES ---------- */
 app.get("/questoes", (req, res) => {
