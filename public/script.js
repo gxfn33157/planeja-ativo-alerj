@@ -1,179 +1,97 @@
 let questoes = [];
-let currentIndex = 0;
-let respostas = [];
+let indice = 0;
+let respostas = JSON.parse(localStorage.getItem("respostas")) || [];
 
-/* ======================
-   TELAS
-====================== */
+async function iniciar() {
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("simulado").classList.remove("hidden");
 
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => {
-    s.classList.remove("active");
-  });
-  document.getElementById(id).classList.add("active");
+  const res = await fetch("/questoes.json");
+  questoes = await res.json();
+
+  questoes = questoes.sort(() => Math.random() - 0.5);
+
+  carregar();
 }
 
-/* ======================
-   LOGIN / REGISTRO
-====================== */
+function carregar() {
+  const q = questoes[indice];
+  document.getElementById("contador").innerText = `Questão ${indice + 1}/${questoes.length}`;
+  document.getElementById("pergunta").innerText = q.texto;
 
-function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const div = document.getElementById("alternativas");
+  div.innerHTML = "";
 
-  fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        document.getElementById("login-msg").innerText = data.error;
-        return;
-      }
-      localStorage.setItem("user", data.username);
-      document.getElementById("user-display").innerText = data.username;
-      showScreen("dashboard-screen");
-    });
-}
+  q.alts.forEach((a, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = `${String.fromCharCode(65 + i)}) ${a.l}`;
 
-function register() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  fetch("/api/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  })
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("login-msg").innerText =
-        data.error || "Conta criada! Faça login.";
-    });
-}
-
-function logout() {
-  localStorage.removeItem("user");
-  showScreen("login-screen");
-}
-
-/* ======================
-   SIMULADO
-====================== */
-
-function startSimulado() {
-  fetch("/questoes.json")
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao carregar JSON");
-      return res.json();
-    })
-    .then(data => {
-      questoes = data;
-      respostas = new Array(questoes.length).fill(null);
-      currentIndex = 0;
-      showScreen("simulado-screen");
-      renderQuestao();
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Erro ao carregar questões.");
-    });
-}
-
-function renderQuestao() {
-  const q = questoes[currentIndex];
-
-  document.getElementById("q-number").innerText =
-    `Questão ${currentIndex + 1}/${questoes.length}`;
-
-  document.getElementById("q-text").innerText = q.texto;
-
-  const optionsDiv = document.getElementById("q-options");
-  optionsDiv.innerHTML = "";
-
-  const letras = ["A", "B", "C", "D", "E"];
-
-  q.alts.forEach((alt, i) => {
-    const letra = letras[i];
-
-    const label = document.createElement("label");
-    label.className = "option";
-
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "option";
-    input.value = letra;
-
-    if (respostas[currentIndex] === letra) {
-      input.checked = true;
+    if (respostas[indice] === String.fromCharCode(65 + i)) {
+      btn.classList.add("selecionada");
     }
 
-    input.addEventListener("change", () => {
-      respostas[currentIndex] = letra;
-    });
-
-    label.appendChild(input);
-    label.append(` ${letra}) ${alt.l}`);
-
-    optionsDiv.appendChild(label);
+    btn.onclick = () => {
+      respostas[indice] = String.fromCharCode(65 + i);
+      localStorage.setItem("respostas", JSON.stringify(respostas));
+      carregar();
+    };
+    div.appendChild(btn);
   });
-
-  document.getElementById("btn-next").style.display =
-    currentIndex === questoes.length - 1 ? "none" : "inline-block";
-
-  document.getElementById("btn-finish").style.display =
-    currentIndex === questoes.length - 1 ? "inline-block" : "none";
 }
 
-function nextQuestion() {
-  if (!respostas[currentIndex]) {
-    alert("Selecione uma alternativa antes de continuar.");
+function proxima() {
+  if (indice < questoes.length - 1) {
+    indice++;
+    carregar();
+  }
+}
+
+function anterior() {
+  if (indice > 0) {
+    indice--;
+    carregar();
+  }
+}
+
+function finalizar() {
+  const pendentes = respostas.filter(r => !r).length;
+  if (pendentes > 0) {
+    alert(`Você possui ${pendentes} questões sem resposta.`);
     return;
   }
-  currentIndex++;
-  renderQuestao();
-}
 
-function prevQuestion() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    renderQuestao();
-  }
-}
-
-function quitSimulado() {
-  showScreen("dashboard-screen");
-}
-
-/* ======================
-   FINALIZAR
-====================== */
-
-function finishSimulado() {
   let acertos = 0;
+  let porMateria = {};
 
   questoes.forEach((q, i) => {
-    if (respostas[i] === q.correta) acertos++;
+    if (respostas[i] === q.correta) {
+      acertos++;
+    } else {
+      porMateria[q.materia] = porMateria[q.materia] || new Set();
+      porMateria[q.materia].add(q.conteudo);
+    }
   });
 
-  document.getElementById("score-val").innerText = acertos;
-  document.getElementById("total-val").innerText = questoes.length;
+  document.getElementById("simulado").classList.add("hidden");
+  document.getElementById("resultado").classList.remove("hidden");
+  document.getElementById("nota").innerText = `${acertos} / ${questoes.length}`;
 
-  showScreen("result-screen");
+  const analise = document.getElementById("analise");
+  analise.innerHTML = "<h3>Conteúdos para revisar:</h3>";
+
+  for (let m in porMateria) {
+    analise.innerHTML += `<p><b>${m}</b>: ${[...porMateria[m]].join(", ")}</p>`;
+  }
+
+  localStorage.removeItem("respostas");
 }
 
-function showDashboard() {
-  showScreen("dashboard-screen");
+function sair() {
+  localStorage.setItem("respostas", JSON.stringify(respostas));
+  location.reload();
 }
 
-/* ======================
-   AUTOLOGIN
-====================== */
-
-const savedUser = localStorage.getItem("user");
-if (savedUser) {
-  document.getElementById("user-display").innerText = savedUser;
-  showScreen("dashboard-screen");
+function reiniciar() {
+  localStorage.clear();
+  location.reload();
 }
