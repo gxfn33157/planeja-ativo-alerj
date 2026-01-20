@@ -1,9 +1,8 @@
 body {
   margin: 0;
-  font-family: "Inter", Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #020617);
+  font-family: Inter, Arial, sans-serif;
+  background: linear-gradient(135deg, #020617, #0f172a);
   color: #e5e7eb;
-  min-height: 100vh;
 }
 
 .screen {
@@ -13,34 +12,52 @@ body {
 
 .screen.active {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-.center-box {
-  background: rgba(15, 23, 42, 0.9);
+.center-box, .simulado-box, .resultado-box {
+  background: rgba(15,23,42,0.95);
   padding: 40px;
   border-radius: 16px;
-  text-align: center;
-  box-shadow: 0 0 40px rgba(56, 189, 248, 0.2);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 40px rgba(56,189,248,0.2);
 }
 
-.center-box h1 {
-  font-size: 2rem;
-  margin-bottom: 24px;
-}
-
-button.primary {
-  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
   border: none;
-  padding: 16px 32px;
-  font-size: 1.1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #020617;
-  font-weight: 600;
 }
 
-button.primary:hover {
-  opacity: 0.9;
+button {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+  font-weight: bold;
+}
+
+.secondary {
+  background: #334155;
+  color: white;
+}
+
+#alternativas button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  background: #1e293b;
+  color: white;
+}
+
+#alternativas button.selected {
+  background: #0ea5e9;
 }
