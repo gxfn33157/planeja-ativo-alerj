@@ -1,203 +1,172 @@
-/* =====================
-   VARIÁVEIS
-===================== */
-let usuario = JSON.parse(localStorage.getItem("user")) || null;
+/* ===============================
+   ESTADO GLOBAL
+================================ */
+let usuarioLogado = null;
 let questoes = [];
-let indiceAtual = 0;
-let respostas = {};
+let questaoAtual = 0;
+let respostas = [];
 
-/* =====================
-   ELEMENTOS
-===================== */
-const telas = document.querySelectorAll(".screen");
-
-const loginMsg = document.getElementById("login-msg");
-const userDisplay = document.getElementById("user-display");
-
-const qNumber = document.getElementById("q-number");
-const qText = document.getElementById("q-text");
-const qOptions = document.getElementById("q-options");
-
-const btnNext = document.getElementById("btn-next");
-const btnFinish = document.getElementById("btn-finish");
-
-/* =====================
+/* ===============================
    TELAS
-===================== */
+================================ */
 function mostrarTela(id) {
-  telas.forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(tela => {
+    tela.classList.remove("active");
+  });
+
   const tela = document.getElementById(id);
   if (tela) tela.classList.add("active");
 }
 
-/* =====================
-   LOGIN / REGISTRO
-===================== */
-function login() {
+/* ===============================
+   LOGIN
+================================ */
+async function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("login-msg");
+
+  msg.textContent = "";
 
   if (!username || !password) {
-    loginMsg.innerText = "Informe usuário e senha.";
+    msg.textContent = "Preencha usuário e senha.";
     return;
   }
 
-  fetch("/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        usuario = data.user;
-        localStorage.setItem("user", JSON.stringify(usuario));
-        iniciarDashboard();
-      } else {
-        criarConta(username, password);
-      }
-    })
-    .catch(() => {
-      loginMsg.innerText = "Erro ao conectar com o servidor.";
+  try {
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
     });
-}
 
-function criarConta(username, password) {
-  fetch("/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        loginMsg.innerText = "Conta criada! Entrando...";
-        setTimeout(login, 800);
-      } else {
-        loginMsg.innerText = data.error || "Erro ao criar conta.";
-      }
-    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      msg.textContent = data.error || "Erro ao entrar.";
+      return;
+    }
+
+    usuarioLogado = data.user;
+    document.getElementById("user-display").textContent = usuarioLogado.username;
+    mostrarTela("dashboard-screen");
+
+  } catch (e) {
+    msg.textContent = "Erro de conexão.";
+  }
 }
 
 function logout() {
-  localStorage.removeItem("user");
-  location.reload();
+  usuarioLogado = null;
+  mostrarTela("login-screen");
 }
 
-/* =====================
-   DASHBOARD
-===================== */
-function iniciarDashboard() {
-  userDisplay.innerText = usuario.username;
-  mostrarTela("dashboard-screen");
-}
-
-/* =====================
+/* ===============================
    SIMULADO
-===================== */
-function startSimulado() {
-  fetch("/questoes")
-    .then(r => r.json())
-    .then(data => {
-      questoes = shuffle(data).slice(0, 80);
-      indiceAtual = 0;
-      respostas = {};
-      mostrarTela("simulado-screen");
-      renderizarQuestao();
-    })
-    .catch(() => {
-      alert("Erro ao carregar questões.");
-    });
+================================ */
+async function startSimulado() {
+  try {
+    const res = await fetch("/questoes");
+    if (!res.ok) throw new Error("Falha ao carregar");
+
+    questoes = await res.json();
+
+    if (!Array.isArray(questoes) || questoes.length === 0) {
+      throw new Error("Questões inválidas");
+    }
+
+    // embaralhar
+    questoes = questoes.sort(() => Math.random() - 0.5);
+
+    respostas = new Array(questoes.length).fill(null);
+    questaoAtual = 0;
+
+    mostrarTela("simulado-screen");
+    renderQuestao();
+
+  } catch (e) {
+    alert("Erro ao carregar questões.");
+    console.error(e);
+  }
 }
 
-function renderizarQuestao() {
-  const q = questoes[indiceAtual];
+/* ===============================
+   RENDER QUESTÃO
+================================ */
+function renderQuestao() {
+  const q = questoes[questaoAtual];
   if (!q) return;
 
-  qNumber.innerText = `Questão ${indiceAtual + 1} / ${questoes.length}`;
-  qText.innerText = q.texto;
-  qOptions.innerHTML = "";
+  document.getElementById("q-number").textContent =
+    `Questão ${questaoAtual + 1}/${questoes.length}`;
 
-  Object.entries(q.alternativas).forEach(([letra, texto]) => {
-    const label = document.createElement("label");
-    label.className = "option";
+  document.getElementById("q-text").textContent = q.pergunta;
 
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "resposta";
-    input.value = letra;
+  const box = document.getElementById("q-options");
+  box.innerHTML = "";
 
-    if (respostas[q.id] === letra) input.checked = true;
+  q.alternativas.forEach((alt, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = `${String.fromCharCode(65 + i)}) ${alt}`;
+    btn.className = "option-btn";
 
-    input.onchange = () => {
-      respostas[q.id] = letra;
+    if (respostas[questaoAtual] === i) {
+      btn.classList.add("selected");
+    }
+
+    btn.onclick = () => {
+      respostas[questaoAtual] = i;
+      renderQuestao();
     };
 
-    label.appendChild(input);
-    label.append(` ${letra.toUpperCase()}) ${texto}`);
-    qOptions.appendChild(label);
+    box.appendChild(btn);
   });
 
-  btnNext.style.display =
-    indiceAtual < questoes.length - 1 ? "inline-block" : "none";
-  btnFinish.style.display =
-    indiceAtual === questoes.length - 1 ? "inline-block" : "none";
+  document.getElementById("btn-finish").style.display =
+    questaoAtual === questoes.length - 1 ? "inline-block" : "none";
+}
+
+/* ===============================
+   NAVEGAÇÃO
+================================ */
+function prevQuestion() {
+  if (questaoAtual > 0) {
+    questaoAtual--;
+    renderQuestao();
+  }
 }
 
 function nextQuestion() {
-  indiceAtual++;
-  renderizarQuestao();
-}
-
-function prevQuestion() {
-  if (indiceAtual > 0) {
-    indiceAtual--;
-    renderizarQuestao();
+  if (questaoAtual < questoes.length - 1) {
+    questaoAtual++;
+    renderQuestao();
   }
 }
 
 function finishSimulado() {
   let acertos = 0;
 
-  questoes.forEach(q => {
-    if (respostas[q.id] === q.correta) acertos++;
+  questoes.forEach((q, i) => {
+    if (respostas[i] === q.correta) acertos++;
   });
 
-  document.getElementById("score-val").innerText = acertos;
-  document.getElementById("total-val").innerText = questoes.length;
+  document.getElementById("score-val").textContent = acertos;
+  document.getElementById("total-val").textContent = questoes.length;
 
   mostrarTela("result-screen");
+}
+
+function quitSimulado() {
+  mostrarTela("dashboard-screen");
 }
 
 function showDashboard() {
   mostrarTela("dashboard-screen");
 }
 
-/* =====================
-   UTIL
-===================== */
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-
-/* =====================
-   AUTOLOGIN
-===================== */
+/* ===============================
+   INICIAL
+================================ */
 window.onload = () => {
-  if (usuario) iniciarDashboard();
-  else mostrarTela("login-screen");
+  mostrarTela("login-screen");
 };
-
-/* ========= FUNÇÕES PONTE PARA OS BOTÕES ========= */
-
-function anterior() {
-  voltarQuestao();
-}
-
-function proxima() {
-  proximaQuestao();
-}
-
-function finalizar() {
-  finalizarSimulado();
-}
