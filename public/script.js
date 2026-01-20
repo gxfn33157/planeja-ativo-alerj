@@ -3,6 +3,8 @@ let questaoAtual = 0;
 let respostas = [];
 let usuario = null;
 
+/* ================= TELAS ================= */
+
 function mostrarTela(id) {
   document.querySelectorAll(".screen").forEach(t => t.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -25,6 +27,7 @@ async function login() {
     });
 
     const data = await res.json();
+
     if (!data.success) {
       msg.textContent = data.error;
       return;
@@ -53,7 +56,11 @@ async function startSimulado() {
     const res = await fetch("/questoes");
     const todas = await res.json();
 
-    questoes = todas.sort(() => Math.random() - 0.5).slice(0, 80);
+    // 🔥 Sorteio aleatório SEM REPETIR
+    questoes = todas
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 80);
+
     respostas = new Array(questoes.length).fill(null);
     questaoAtual = 0;
   }
@@ -115,8 +122,12 @@ function finalizar() {
   const materias = {};
 
   questoes.forEach((q, i) => {
-    if (!materias[q.materia]) materias[q.materia] = { total: 0, acertos: 0 };
+    if (!materias[q.materia]) {
+      materias[q.materia] = { total: 0, acertos: 0 };
+    }
+
     materias[q.materia].total++;
+
     if (respostas[i] === q.correta) {
       acertos++;
       materias[q.materia].acertos++;
@@ -133,8 +144,10 @@ function finalizar() {
     detalhe.innerHTML += `
       <p>
         <strong>${m}</strong> — ${materias[m].acertos}/${materias[m].total}<br>
-        📚 <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(m)}"
-        target="_blank">Vídeos para revisar</a>
+        <a target="_blank"
+          href="https://www.youtube.com/results?search_query=${encodeURIComponent(m)}">
+          📚 Revisar matéria
+        </a>
       </p>
     `;
   }
