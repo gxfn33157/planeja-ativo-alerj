@@ -3,12 +3,8 @@ let questaoAtual = 0;
 let respostas = [];
 let usuario = null;
 
-/* ================= UTIL ================= */
-
 function mostrarTela(id) {
-  document.querySelectorAll(".screen").forEach(tela => {
-    tela.classList.remove("active");
-  });
+  document.querySelectorAll(".screen").forEach(t => t.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
@@ -29,14 +25,15 @@ async function login() {
     });
 
     const data = await res.json();
-
     if (!data.success) {
-      msg.textContent = data.error || "Erro ao entrar";
+      msg.textContent = data.error;
       return;
     }
 
     usuario = data.user;
     document.getElementById("user-display").textContent = usuario.username;
+
+    carregarProgresso();
     mostrarTela("dashboard-screen");
 
   } catch {
@@ -52,27 +49,17 @@ function logout() {
 /* ================= SIMULADO ================= */
 
 async function startSimulado() {
-  try {
+  if (questoes.length === 0) {
     const res = await fetch("/questoes");
-    questoes = await res.json();
+    const todas = await res.json();
 
-    if (!Array.isArray(questoes) || questoes.length === 0) {
-      alert("Erro ao carregar questões.");
-      return;
-    }
-
-    // embaralhar e pegar 80
-    questoes = questoes.sort(() => Math.random() - 0.5).slice(0, 80);
-
+    questoes = todas.sort(() => Math.random() - 0.5).slice(0, 80);
     respostas = new Array(questoes.length).fill(null);
     questaoAtual = 0;
-
-    mostrarTela("simulado-screen");
-    renderQuestao();
-
-  } catch {
-    alert("Erro ao carregar questões.");
   }
+
+  mostrarTela("simulado-screen");
+  renderQuestao();
 }
 
 function renderQuestao() {
@@ -97,6 +84,7 @@ function renderQuestao() {
 
     btn.onclick = () => {
       respostas[questaoAtual] = i;
+      salvarProgresso();
       renderQuestao();
     };
 
@@ -107,6 +95,7 @@ function renderQuestao() {
 function anterior() {
   if (questaoAtual > 0) {
     questaoAtual--;
+    salvarProgresso();
     renderQuestao();
   }
 }
@@ -114,19 +103,41 @@ function anterior() {
 function proxima() {
   if (questaoAtual < questoes.length - 1) {
     questaoAtual++;
+    salvarProgresso();
     renderQuestao();
   }
 }
 
 function finalizar() {
+  localStorage.removeItem("simulado_" + usuario.id);
+
   let acertos = 0;
+  const materias = {};
 
   questoes.forEach((q, i) => {
-    if (respostas[i] === q.correta) acertos++;
+    if (!materias[q.materia]) materias[q.materia] = { total: 0, acertos: 0 };
+    materias[q.materia].total++;
+    if (respostas[i] === q.correta) {
+      acertos++;
+      materias[q.materia].acertos++;
+    }
   });
 
   document.getElementById("pontuacao").textContent =
-    `Você acertou ${acertos} de ${questoes.length} questões.`;
+    `Você acertou ${acertos} de ${questoes.length} questões`;
+
+  const detalhe = document.getElementById("resultado-detalhado");
+  detalhe.innerHTML = "<h3>Análise por Matéria</h3>";
+
+  for (let m in materias) {
+    detalhe.innerHTML += `
+      <p>
+        <strong>${m}</strong> — ${materias[m].acertos}/${materias[m].total}<br>
+        📚 <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(m)}"
+        target="_blank">Vídeos para revisar</a>
+      </p>
+    `;
+  }
 
   mostrarTela("resultado-screen");
 }
@@ -135,8 +146,23 @@ function voltarDashboard() {
   mostrarTela("dashboard-screen");
 }
 
-/* ================= INIT ================= */
+/* ================= PROGRESSO ================= */
 
-window.onload = () => {
-  mostrarTela("login-screen");
-};
+function salvarProgresso() {
+  localStorage.setItem(
+    "simulado_" + usuario.id,
+    JSON.stringify({ questoes, respostas, questaoAtual })
+  );
+}
+
+function carregarProgresso() {
+  const salvo = localStorage.getItem("simulado_" + usuario.id);
+  if (salvo) {
+    const dados = JSON.parse(salvo);
+    questoes = dados.questoes;
+    respostas = dados.respostas;
+    questaoAtual = dados.questaoAtual;
+  }
+}
+
+window.onload = () => mostrarTela("login-screen");
