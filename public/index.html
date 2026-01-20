@@ -1,102 +1,41 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Planeja Ativo - Simulado</title>
-
-    <!-- PATH ABSOLUTO (OBRIGATÓRIO) -->
-    <link rel="stylesheet" href="/style.css" />
+  <meta charset="UTF-8">
+  <title>Simulado ALERJ 2026</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="app">
-
-    <!-- LOGIN -->
-    <div id="login-screen" class="screen active">
-        <div class="login-box">
-            <h1>Planeja Ativo</h1>
-            <input type="text" id="username" placeholder="Usuário" />
-            <input type="password" id="password" placeholder="Senha" />
-            <button onclick="login()" id="btn-login-action">Entrar</button>
-            <button onclick="register()" class="secondary" id="btn-register-action">
-                Criar Conta
-            </button>
-            <p id="login-msg"></p>
-        </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboard-screen" class="screen">
-        <nav>
-            <h2>Olá, <span id="user-display"></span></h2>
-            <button onclick="logout()">Sair</button>
-        </nav>
-
-        <div class="container">
-            <div class="card">
-                <h3>Iniciar Simulado</h3>
-                <p>80 Questões - Estilo Planeja</p>
-                <button onclick="startSimulado()">Começar Agora</button>
-            </div>
-
-            <div class="card">
-                <h3>Seu Desempenho</h3>
-                <div id="last-result">Nenhum resultado ainda.</div>
-            </div>
-
-            <div class="card full-width">
-                <h3>Histórico Recente</h3>
-                <ul id="history-list"></ul>
-            </div>
-
-            <div class="card full-width">
-                <h3>Ranking Geral</h3>
-                <ul id="ranking-list"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- SIMULADO -->
-    <div id="simulado-screen" class="screen">
-        <div class="simulado-header">
-            <span id="q-number">Questão 1/80</span>
-            <button onclick="quitSimulado()">Sair</button>
-        </div>
-
-        <div id="question-container">
-            <h3 id="q-text">Texto da questão...</h3>
-            <div id="q-options"></div>
-        </div>
-
-        <div class="simulado-footer">
-            <button onclick="prevQuestion()">Anterior</button>
-            <button onclick="nextQuestion()" id="btn-next">Próxima</button>
-            <button onclick="finishSimulado()" id="btn-finish" style="display:none;">
-                Finalizar
-            </button>
-        </div>
-    </div>
-
-    <!-- RESULTADO -->
-    <div id="result-screen" class="screen">
-        <h1>Resultado</h1>
-        <div class="score-box">
-            <span id="score-val">0</span> /
-            <span id="total-val">80</span>
-        </div>
-
-        <div id="recommendations">
-            <h3>Análise por Matéria</h3>
-            <ul id="subject-list"></ul>
-        </div>
-
-        <button onclick="showDashboard()">Voltar ao Início</button>
-    </div>
-
+<div id="login">
+  <h1>Simulado ALERJ 2026</h1>
+  <button onclick="iniciar()">Iniciar Simulado</button>
 </div>
 
-<!-- PATH ABSOLUTO (OBRIGATÓRIO) -->
-<script src="/script.js"></script>
+<div id="simulado" class="hidden">
+  <div class="topo">
+    <span id="contador"></span>
+    <button onclick="sair()">Sair</button>
+  </div>
+
+  <h2 id="pergunta"></h2>
+  <div id="alternativas"></div>
+
+  <div class="acoes">
+    <button onclick="anterior()">Anterior</button>
+    <button onclick="proxima()">Próxima</button>
+  </div>
+
+  <button class="finalizar" onclick="finalizar()">Finalizar Simulado</button>
+</div>
+
+<div id="resultado" class="hidden">
+  <h1>Resultado</h1>
+  <h2 id="nota"></h2>
+  <div id="analise"></div>
+  <button onclick="reiniciar()">Voltar ao Início</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
