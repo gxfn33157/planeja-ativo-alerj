@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: planeja-ativo-alerj
-    env: node
-    buildCommand: npm install
-    startCommand: npm start
